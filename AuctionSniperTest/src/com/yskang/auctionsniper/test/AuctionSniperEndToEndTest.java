@@ -22,7 +22,7 @@ public class AuctionSniperEndToEndTest extends ActivityInstrumentationTestCase2<
 		application = new ApplicationRunner(solo);
 	}
 
-	public void testDisplayBlackBox() throws Exception {
+	public void testSingleJoinLostWithoutBidding() throws Exception {
 		auction.startSellingItem();
 		application.startBiddingIn(auction);
 		auction.hasReceivedJoinRequestFromSniper();
