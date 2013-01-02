@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 public class SingleMessageListener implements MessageListener {
 	private final ArrayBlockingQueue<Message> messages = new ArrayBlockingQueue<Message>(1);
-	private TextView statusView;
 	public Handler mHandler;
 	public TextView mStatusView;
 	
@@ -24,7 +23,6 @@ public class SingleMessageListener implements MessageListener {
 	@Override
 	public void processMessage(Chat chat, Message message) {
 		if(message.getBody().equals("closed")){
-			//statusView.setText(R.string.status_lost);
 			mHandler.post(new Runnable(){
 				public void run(){
 					mStatusView.setText(R.string.status_lost);

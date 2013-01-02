@@ -22,14 +22,25 @@ public class AuctionSniperEndToEndTest extends ActivityInstrumentationTestCase2<
 		application = new ApplicationRunner(solo);
 	}
 
-	public void testSingleJoinLostWithoutBidding() throws Exception {
+	public void test_1_SingleJoinLostWithoutBidding() throws Exception {
 		auction.startSellingItem();
 		application.startBiddingIn(auction);
-		auction.hasReceivedJoinRequestFromSniper();
+		auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_ID);
 		auction.announceClosed();
 		application.showsSniperHasLostAuction();
 	}
 
+	public void test_2_SingleJoinDidAndLost() throws Exception {
+	    auction.startSellingItem();
+	    application.startBiddingIn(auction);
+	    auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_ID);
+	    auction.reportPrice(1000, 98, "other bidder");
+	    application.hasShownSniperIsBidding();
+	    auction.hasReceivedBid(1098, ApplicationRunner.SNIPER_XMPP_ID);
+	    auction.announceClosed();
+	    application.showsSniperHasLostAuction();  
+	}
+	
 	@Override
 	public void tearDown() throws Exception {
 		solo.finishOpenedActivities();

@@ -21,6 +21,8 @@ public class MainActivity extends Activity {
 	private String itemId;
 	private static final String SNIPER_PASSWORD = "sniper";
 	public static final String c = "sniper";
+	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
+	public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 	private Chat currentChat;
 
 	public Button buttonJoin;
@@ -83,7 +85,7 @@ public class MainActivity extends Activity {
 
 		currentChat = connection.getChatManager().createChat(
 				"auction-item-54321@localhost", new SingleMessageListener(handler, statusView));
-		currentChat.sendMessage("hello!!!");
+		currentChat.sendMessage(JOIN_COMMAND_FORMAT);
 	}
 
 	public void updateStatusToLost() {
