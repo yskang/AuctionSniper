@@ -10,12 +10,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements AuctionEventListener {
 
 	private static final String ITEM_ID_AS_LOGIN = "sniper";
 	private String itemId;
@@ -28,7 +29,7 @@ public class MainActivity extends Activity {
 	public Button buttonJoin;
 	public TextView statusView;
 
-	private SingleMessageListener messageListener;
+	private AuctionMessageTranslator messageListener;
 
 	private XMPPConnection connection;
 
@@ -82,13 +83,19 @@ public class MainActivity extends Activity {
 
 		connection.connect();
 		connection.login(ITEM_ID_AS_LOGIN, SNIPER_PASSWORD, SNIPER_PASSWORD);
-
+		
 		currentChat = connection.getChatManager().createChat(
-				"auction-item-54321@localhost", new SingleMessageListener(handler, statusView));
+				"auction-item-54321@localhost", new AuctionMessageTranslator(this));
 		currentChat.sendMessage(JOIN_COMMAND_FORMAT);
 	}
 
-	public void updateStatusToLost() {
-		statusView.setText(R.string.status_lost);
+	@Override
+	public void auctionClosed() {
+		Log.d("yskang", "closed");
+		handler.post(new Runnable(){
+			public void run(){
+				statusView.setText(R.string.status_lost);
+			}
+		});	
 	};
 }

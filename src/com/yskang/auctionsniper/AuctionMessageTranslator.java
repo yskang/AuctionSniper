@@ -6,30 +6,24 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.packet.Message;
 
+import android.content.Context;
 import android.os.Handler;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class SingleMessageListener implements MessageListener {
+public class AuctionMessageTranslator implements MessageListener {
 	private final ArrayBlockingQueue<Message> messages = new ArrayBlockingQueue<Message>(1);
 	public Handler mHandler;
 	public TextView mStatusView;
+	public AuctionEventListener auctionEventListener;
 	
-	public SingleMessageListener(Handler handler, TextView statusText){
-		mHandler = handler;
-		mStatusView = statusText;
+	public AuctionMessageTranslator(AuctionEventListener listener){
+		auctionEventListener = listener;
 	}
 	
 	@Override
 	public void processMessage(Chat chat, Message message) {
-		if(message.getBody().equals("closed")){
-			mHandler.post(new Runnable(){
-				public void run(){
-					mStatusView.setText(R.string.status_lost);
-				}
-			});
-			
-		}
+			auctionEventListener.auctionClosed();
 	}
 
 	public void receivesAMessage() throws InterruptedException {
