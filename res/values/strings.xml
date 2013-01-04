@@ -5,8 +5,9 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="status">Status</string>
-    <string name="status_init">initial...</string>
-    <string name="status_joining">joining...</string>
-    <string name="status_lost">lost...</string>
+    <string name="status_init">initial</string>
+    <string name="status_joining">joining</string>
+    <string name="status_lost">lost</string>
+    <string name="status_bidding">bidding</string>
 
 </resources>

@@ -3,7 +3,6 @@ package com.yskang.auctionsniper.test;
 import com.jayway.android.robotium.solo.Solo;
 
 public class ApplicationRunner {
-	public static final String SNIPER_ID = "sniper";
 	public static final String SNIPER_PASSWORD = "sniper";
 	private static final String STATUS_JOINING = "joining";
 	private static final String STATUS_LOST = "lost";

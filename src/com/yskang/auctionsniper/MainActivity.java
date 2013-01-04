@@ -16,27 +16,37 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements AuctionEventListener {
+public class MainActivity extends Activity implements SniperListener {
 
-	private static final String ITEM_ID_AS_LOGIN = "sniper";
 	private String itemId;
+
+	private static final String SNIPER_HOSTNAME = "localhost";
+	private static final String SNIPER_USERNAME = "sniper";
 	private static final String SNIPER_PASSWORD = "sniper";
-	public static final String c = "sniper";
+	private static final int SNIPER_PORT = 5222;
+	private static final String SNIPER_ITEM_ID = "item-54321";
+
+	private Chat notToBeGCd;
+	
+	private MyAuction mAuction;
+
+	public static final String AUCTION_RESOURCE = "Auction";
+	public static final String ITEM_ID_AS_LOGIN = "auction-%s";
+	public static final String AUCTION_ID_FORMAT = ITEM_ID_AS_LOGIN + "@%s/"
+			+ AUCTION_RESOURCE;
+
 	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
 	public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
-	private Chat currentChat;
 
 	public Button buttonJoin;
 	public TextView statusView;
-
-	private AuctionMessageTranslator messageListener;
 
 	private XMPPConnection connection;
 
 	public Thread commThread = new Thread(new Comm());
 
 	public Handler handler = new Handler();
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,40 +78,70 @@ public class MainActivity extends Activity implements AuctionEventListener {
 	class Comm implements Runnable {
 		public void run() {
 			try {
-				joinToServer();
+
+				ConnectionConfiguration connConfig = new ConnectionConfiguration(
+						SNIPER_HOSTNAME, SNIPER_PORT, SNIPER_HOSTNAME);
+				connection = new XMPPConnection(connConfig);
+
+				connection.connect();
+				connection.login(SNIPER_USERNAME, SNIPER_PASSWORD,
+						AUCTION_RESOURCE);
+
+				joinAuction(connection, SNIPER_ITEM_ID);
 			} catch (XMPPException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public void joinToServer() throws XMPPException {
+	public void joinAuction(XMPPConnection connection, String itemId)
+			throws XMPPException {
 
-		ConnectionConfiguration connConfig = new ConnectionConfiguration(
-				"localhost", 5222, "localhost");
-		connection = new XMPPConnection(connConfig);
+		final Chat chat = connection.getChatManager().createChat(
+				auctionId(itemId, connection), null);
 
-		connection.connect();
-		connection.login(ITEM_ID_AS_LOGIN, SNIPER_PASSWORD, SNIPER_PASSWORD);
+		this.notToBeGCd = chat;
+
+//		Auction auction = new Auction() {
+//			@Override
+//			public void bid(int amount) {
+//				Log.d("yskang", "I'm bidding... amount is " + amount);
+//				try {
+//					chat.sendMessage(String.format(BID_COMMAND_FORMAT, amount));
+//				} catch (XMPPException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		};
+
+		mAuction = new MyAuction(chat);
 		
-		currentChat = connection.getChatManager().createChat(
-				"auction-item-54321@localhost", new AuctionMessageTranslator(this));
-		currentChat.sendMessage(JOIN_COMMAND_FORMAT);
+		chat.addMessageListener(new AuctionMessageTranslator(new AuctionSniper(
+				mAuction, this)));
+		chat.sendMessage(JOIN_COMMAND_FORMAT);
+	}
+
+	private static String auctionId(String itemId, XMPPConnection connection) {
+		return String.format(AUCTION_ID_FORMAT, itemId,
+				connection.getServiceName());
 	}
 
 	@Override
-	public void auctionClosed() {
-		Log.d("yskang", "closed");
-		handler.post(new Runnable(){
-			public void run(){
+	public void sniperLost() {
+		runOnUiThread(new Runnable() {
+			public void run() {
 				statusView.setText(R.string.status_lost);
 			}
-		});	
+		});
 	}
 
 	@Override
-	public void currentPrice(int price, int increment) {
-		// TODO Auto-generated method stub
-		
+	public void sniperBidding() {
+		Log.d("yskang", "I'm going to change status text...");
+		runOnUiThread(new Runnable() {
+			public void run() {
+				statusView.setText(R.string.status_bidding);
+			}
+		});
 	};
 }
