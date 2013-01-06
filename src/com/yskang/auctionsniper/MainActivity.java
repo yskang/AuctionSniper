@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends Activity{
+public class MainActivity extends Activity {
 
 	private static final String SNIPER_HOSTNAME = "localhost";
 	private static final String SNIPER_USERNAME = "sniper";
@@ -37,7 +37,7 @@ public class MainActivity extends Activity{
 	private XMPPConnection connection;
 
 	public Thread commThread = new Thread(new Comm());
-	
+
 	public Handler handler = new Handler();
 
 	@Override
@@ -108,8 +108,9 @@ public class MainActivity extends Activity{
 
 		Auction auction = new XMPPAuction(chat);
 
-		chat.addMessageListener(new AuctionMessageTranslator(new AuctionSniper(
-				auction, new SniperStateDisplayer(this))));
+		chat.addMessageListener(new AuctionMessageTranslator(connection
+				.getUser(), new AuctionSniper(auction,
+				new SniperStateDisplayer(this))));
 		auction.join();
 	}
 
@@ -120,10 +121,8 @@ public class MainActivity extends Activity{
 
 	@Override
 	protected void onStop() {
-		if (this.mConnection.isConnected()) {
-			Thread commDisThread = new Thread(new CommDis(this.mConnection));
-			commDisThread.start();
-		}
+		Thread commDisThread = new Thread(new CommDis(this.mConnection));
+		commDisThread.start();
 		super.onStop();
 	}
 }

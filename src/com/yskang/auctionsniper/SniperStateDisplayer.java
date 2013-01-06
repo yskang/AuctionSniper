@@ -28,6 +28,11 @@ public class SniperStateDisplayer implements SniperListener {
 		showStatus(R.string.status_winning);
 	};	
 	
+	@Override
+	public void sniperWon() {
+		showStatus(R.string.status_won);
+	}
+
 	public void showStatus(final int statusID){
 		mActivity.runOnUiThread(new Runnable() {
 			public void run() {
@@ -35,5 +40,4 @@ public class SniperStateDisplayer implements SniperListener {
 			}
 		});
 	}
-	
 }

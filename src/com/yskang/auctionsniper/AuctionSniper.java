@@ -1,11 +1,11 @@
 package com.yskang.auctionsniper;
 
-
 public class AuctionSniper implements AuctionEventListener {
 
 	private final SniperListener sniperListener;
 	private Auction mAuction;
-	
+	private boolean isWinning = false;
+
 	public AuctionSniper(Auction auction, SniperListener sniperListener) {
 		this.mAuction = auction;
 		this.sniperListener = sniperListener;
@@ -13,12 +13,21 @@ public class AuctionSniper implements AuctionEventListener {
 
 	@Override
 	public void auctionClosed() {
-		sniperListener.sniperLost();
+		if(isWinning){
+			sniperListener.sniperWon();
+		}else{
+			sniperListener.sniperLost();
+		}
 	}
 
 	@Override
-	public void currentPrice(int price, int increment) {
-		mAuction.bid(price + increment);
-		sniperListener.sniperBidding();
+	public void currentPrice(int price, int increment, PriceSource priceSource) {
+		isWinning = priceSource == PriceSource.FromSniper;
+		if(isWinning){
+			sniperListener.sniperWinning();
+		}else{
+			mAuction.bid(price + increment);
+			sniperListener.sniperBidding();
+		}
 	}
 }

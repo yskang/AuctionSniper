@@ -41,6 +41,19 @@ public class AuctionSniperEndToEndTest extends ActivityInstrumentationTestCase2<
 	    application.showsSniperHasLostAuction();  
 	}
 	
+	public void test_3_SniperWinsAnAuctionByBiddingHigher() throws Exception{
+		auction.startSellingItem();
+		application.startBiddingIn(auction);
+		auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);
+		auction.reportPrice(1000, 98, "other bidder");
+		application.hasShownSniperIsBidding();
+		auction.hasReceivedBid(1098, ApplicationRunner.SNIPER_XMPP_ID);
+		auction.reportPrice(1098, 97, ApplicationRunner.SNIPER_XMPP_ID);
+		application.hasShownSniperIsWinning();
+		auction.announceClosed();
+		application.showsSniperHasWonAuction();
+	}
+	
 	@Override
 	public void tearDown() throws Exception {
 		solo.finishOpenedActivities();

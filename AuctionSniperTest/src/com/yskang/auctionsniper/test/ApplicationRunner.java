@@ -9,6 +9,7 @@ public class ApplicationRunner {
 	private static final String STATUS_BIDDING = "bidding";
 	private static final String STATUS_WINNING = "winning";
 	public static final String SNIPER_XMPP_ID = "sniper";
+	private static final String STATUS_WON = "won";
 	private AuctionSniperDriver driver;
 
 	public ApplicationRunner(Solo solo) {
@@ -32,5 +33,13 @@ public class ApplicationRunner {
 
 	public void hasShownSniperIsBidding() {
 		driver.showsSniperStatus(STATUS_BIDDING);
+	}
+
+	public void hasShownSniperIsWinning() {
+		driver.showsSniperStatus(STATUS_WINNING);
+	}
+
+	public void showsSniperHasWonAuction() {
+		driver.showsSniperStatus(STATUS_WON);
 	}
 }

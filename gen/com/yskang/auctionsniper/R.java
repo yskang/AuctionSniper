@@ -36,6 +36,7 @@ public final class R {
         public static final int status_joining=0x7f040005;
         public static final int status_lost=0x7f040006;
         public static final int status_winning=0x7f040008;
+        public static final int status_won=0x7f040009;
     }
     public static final class style {
         /** 
