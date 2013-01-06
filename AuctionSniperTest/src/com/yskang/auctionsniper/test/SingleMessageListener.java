@@ -10,6 +10,8 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.packet.Message;
 
+import android.util.Log;
+
 
 public class SingleMessageListener implements MessageListener {
 	private final ArrayBlockingQueue<Message> messages = new ArrayBlockingQueue<Message>(1);
@@ -20,7 +22,6 @@ public class SingleMessageListener implements MessageListener {
 
 	public void receivesAMessage(String messageString)  
 			throws InterruptedException {
-		
 		Message message;
 		message = messages.poll(5, TimeUnit.SECONDS);
 		assertNotNull("Message is Null", message);

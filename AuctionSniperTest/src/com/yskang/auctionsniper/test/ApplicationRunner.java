@@ -7,6 +7,7 @@ public class ApplicationRunner {
 	private static final String STATUS_JOINING = "joining";
 	private static final String STATUS_LOST = "lost";
 	private static final String STATUS_BIDDING = "bidding";
+	private static final String STATUS_WINNING = "winning";
 	public static final String SNIPER_XMPP_ID = "sniper";
 	private AuctionSniperDriver driver;
 
@@ -16,18 +17,18 @@ public class ApplicationRunner {
 
 	public void startBiddingIn(final FakeAuctionServer auction) {
 		driver.startJoinToServer();
-	    driver.showsSniperStatus(STATUS_JOINING);
-	  }
+		driver.showsSniperStatus(STATUS_JOINING);
+	}
 
 	public void showsSniperHasLostAuction() {
-	    driver.showsSniperStatus(STATUS_LOST);
-	  }
+		driver.showsSniperStatus(STATUS_LOST);
+	}
 
 	public void stop() {
-	    if (driver != null) {
-	      driver.dispose();
-	    }
-	  }
+		if (driver != null) {
+			driver.dispose();
+		}
+	}
 
 	public void hasShownSniperIsBidding() {
 		driver.showsSniperStatus(STATUS_BIDDING);

@@ -1,7 +1,6 @@
 package com.yskang.auctionsniper;
 
 import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -9,16 +8,12 @@ import org.jivesoftware.smack.XMPPException;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements SniperListener {
-
-	private String itemId;
+public class MainActivity extends Activity{
 
 	private static final String SNIPER_HOSTNAME = "localhost";
 	private static final String SNIPER_USERNAME = "sniper";
@@ -26,9 +21,7 @@ public class MainActivity extends Activity implements SniperListener {
 	private static final int SNIPER_PORT = 5222;
 	private static final String SNIPER_ITEM_ID = "item-54321";
 
-	private Chat notToBeGCd;
-	
-	private MyAuction mAuction;
+	private XMPPConnection mConnection;
 
 	public static final String AUCTION_RESOURCE = "Auction";
 	public static final String ITEM_ID_AS_LOGIN = "auction-%s";
@@ -44,7 +37,7 @@ public class MainActivity extends Activity implements SniperListener {
 	private XMPPConnection connection;
 
 	public Thread commThread = new Thread(new Comm());
-
+	
 	public Handler handler = new Handler();
 
 	@Override
@@ -61,7 +54,6 @@ public class MainActivity extends Activity implements SniperListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
@@ -94,31 +86,31 @@ public class MainActivity extends Activity implements SniperListener {
 		}
 	}
 
+	class CommDis implements Runnable {
+		private XMPPConnection mConnection;
+
+		public CommDis(XMPPConnection connection) {
+			mConnection = connection;
+		}
+
+		public void run() {
+			mConnection.disconnect();
+		}
+	}
+
 	public void joinAuction(XMPPConnection connection, String itemId)
 			throws XMPPException {
 
 		final Chat chat = connection.getChatManager().createChat(
 				auctionId(itemId, connection), null);
 
-		this.notToBeGCd = chat;
+		this.mConnection = connection;
 
-//		Auction auction = new Auction() {
-//			@Override
-//			public void bid(int amount) {
-//				Log.d("yskang", "I'm bidding... amount is " + amount);
-//				try {
-//					chat.sendMessage(String.format(BID_COMMAND_FORMAT, amount));
-//				} catch (XMPPException e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		};
+		Auction auction = new XMPPAuction(chat);
 
-		mAuction = new MyAuction(chat);
-		
 		chat.addMessageListener(new AuctionMessageTranslator(new AuctionSniper(
-				mAuction, this)));
-		chat.sendMessage(JOIN_COMMAND_FORMAT);
+				auction, new SniperStateDisplayer(this))));
+		auction.join();
 	}
 
 	private static String auctionId(String itemId, XMPPConnection connection) {
@@ -127,21 +119,11 @@ public class MainActivity extends Activity implements SniperListener {
 	}
 
 	@Override
-	public void sniperLost() {
-		runOnUiThread(new Runnable() {
-			public void run() {
-				statusView.setText(R.string.status_lost);
-			}
-		});
+	protected void onStop() {
+		if (this.mConnection.isConnected()) {
+			Thread commDisThread = new Thread(new CommDis(this.mConnection));
+			commDisThread.start();
+		}
+		super.onStop();
 	}
-
-	@Override
-	public void sniperBidding() {
-		Log.d("yskang", "I'm going to change status text...");
-		runOnUiThread(new Runnable() {
-			public void run() {
-				statusView.setText(R.string.status_bidding);
-			}
-		});
-	};
 }
