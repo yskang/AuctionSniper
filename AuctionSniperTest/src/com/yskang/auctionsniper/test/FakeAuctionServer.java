@@ -1,19 +1,14 @@
 package com.yskang.auctionsniper.test;
 
-import java.util.regex.Matcher;
+import static junit.framework.Assert.assertEquals;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Message;
-
-import android.util.Log;
 
 import com.yskang.auctionsniper.MainActivity;
-
-import static junit.framework.Assert.*;
 
 public class FakeAuctionServer {
 	private final SingleMessageListener messageListener = new SingleMessageListener();
@@ -76,6 +71,10 @@ public class FakeAuctionServer {
 		
 		messageListener.receivesAMessage(commandFormat);
 		assertEquals(idArray[0], sniperId);
+	}
+
+	public String getItemId() {
+		return itemId;
 	}
 
 }

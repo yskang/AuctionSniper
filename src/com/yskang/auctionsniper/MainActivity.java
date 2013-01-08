@@ -1,5 +1,7 @@
 package com.yskang.auctionsniper;
 
+import java.util.ArrayList;
+
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
@@ -11,6 +13,7 @@ import android.os.Handler;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -40,6 +43,10 @@ public class MainActivity extends Activity {
 
 	public Handler handler = new Handler();
 
+	public ArrayList<AuctionItem> auctionItemList = new ArrayList<AuctionItem>();
+	
+	public AuctionItemListAdapter mAuctionAdapter;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,8 +55,10 @@ public class MainActivity extends Activity {
 		buttonJoin = (Button) findViewById(R.id.button_join);
 		buttonJoin.setOnClickListener(mOnClickListenerJoin);
 
-		statusView = (TextView) findViewById(R.id.textViewStatusCurrent);
-		statusView.setText(R.string.status_init);
+		mAuctionAdapter = new AuctionItemListAdapter(this, R.layout.auction_list_item, auctionItemList);
+		
+		ListView list = (ListView)findViewById(R.id.AuctionListView);
+		list.setAdapter(mAuctionAdapter);
 	}
 
 	@Override
@@ -106,6 +115,16 @@ public class MainActivity extends Activity {
 
 		this.mConnection = connection;
 
+		AuctionItem auctionItem = new AuctionItem();
+
+		auctionItem.setItemName("item-54321");
+		auctionItem.setLastPrice(100);
+		auctionItem.setLatBid(98);
+		auctionItem.setStatus("init");
+		
+		auctionItemList.add(auctionItem);
+		
+		
 		Auction auction = new XMPPAuction(chat);
 
 		chat.addMessageListener(new AuctionMessageTranslator(connection

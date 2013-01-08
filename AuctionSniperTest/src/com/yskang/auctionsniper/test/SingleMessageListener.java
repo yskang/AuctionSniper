@@ -1,16 +1,14 @@
 package com.yskang.auctionsniper.test;
 
-import static junit.framework.Assert.*;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeUnit;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.packet.Message;
-
-import android.util.Log;
 
 
 public class SingleMessageListener implements MessageListener {

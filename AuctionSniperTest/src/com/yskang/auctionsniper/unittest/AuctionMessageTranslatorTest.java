@@ -1,5 +1,7 @@
 package com.yskang.auctionsniper.unittest;
 
+import junit.framework.TestCase;
+
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.packet.Message;
 import org.jmock.Expectations;
@@ -8,9 +10,6 @@ import org.jmock.Mockery;
 import com.yskang.auctionsniper.AuctionEventListener;
 import com.yskang.auctionsniper.AuctionEventListener.PriceSource;
 import com.yskang.auctionsniper.AuctionMessageTranslator;
-import com.yskang.auctionsniper.AuctionSniper;
-
-import junit.framework.TestCase;
 
 public class AuctionMessageTranslatorTest extends TestCase {
 	public static final Chat UNUSED_CHAT = null;

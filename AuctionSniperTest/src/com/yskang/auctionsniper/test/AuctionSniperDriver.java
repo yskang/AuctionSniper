@@ -13,7 +13,7 @@ public class AuctionSniperDriver {
 	}
 
 	public void showsSniperStatus(String status) {
-		assertTrue("status does not match.", solo.searchText(status));;
+		assertTrue("status does not match.", solo.waitForText(status, 1, 5000));;
 	}
 
 	public void dispose() {
@@ -23,4 +23,14 @@ public class AuctionSniperDriver {
 	public void startJoinToServer() {
 		solo.clickOnButton("Join");
 	}
+
+	public void showsSniperStatus(String itemId, int lastPrice, int lastBid,
+			String status) {
+		assertTrue("status does not match.", solo.searchText(itemId));;
+		assertTrue("status does not match.", solo.searchText(Integer.toString(lastPrice)));;
+		assertTrue("status does not match.", solo.searchText(Integer.toString(lastBid)));;
+		assertTrue("status does not match.", solo.searchText(status));;
+	}
+	
+
 }

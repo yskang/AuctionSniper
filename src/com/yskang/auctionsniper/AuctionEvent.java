@@ -3,8 +3,6 @@ package com.yskang.auctionsniper;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.util.Log;
-
 import com.yskang.auctionsniper.AuctionEventListener.PriceSource;
 
 public class AuctionEvent {

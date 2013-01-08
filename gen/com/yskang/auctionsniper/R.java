@@ -14,14 +14,20 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int button_join=0x7f070003;
-        public static final int menu_settings=0x7f070004;
+        public static final int AuctionListView=0x7f070002;
+        public static final int button_join=0x7f070001;
+        public static final int itemName=0x7f070003;
+        public static final int itemStatus=0x7f070008;
+        public static final int lastBid=0x7f070007;
+        public static final int lastBidTitle=0x7f070006;
+        public static final int lastPrice=0x7f070005;
+        public static final int lastPriceTitle=0x7f070004;
+        public static final int menu_settings=0x7f070009;
         public static final int tableRowStatusDisplay=0x7f070000;
-        public static final int textViewStatusCurrent=0x7f070002;
-        public static final int textViewStatusTitle=0x7f070001;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
+        public static final int auction_list_item=0x7f030001;
     }
     public static final class menu {
         public static final int activity_main=0x7f060000;
@@ -37,6 +43,8 @@ public final class R {
         public static final int status_lost=0x7f040006;
         public static final int status_winning=0x7f040008;
         public static final int status_won=0x7f040009;
+        public static final int title_last_bid=0x7f04000b;
+        public static final int title_last_price=0x7f04000a;
     }
     public static final class style {
         /** 
