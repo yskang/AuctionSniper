@@ -6,11 +6,10 @@ import android.widget.TextView;
 public class SniperStateDisplayer implements SniperListener {
 
 	private Activity mActivity;
-	private TextView statusView;
+	private SnipersTableAdapter sniperTableAdapter;
 	
-	public SniperStateDisplayer(Activity activity) {
-		this.mActivity = activity;
-		this.statusView = (TextView) activity.findViewById(R.id.textViewStatusCurrent);
+	public SniperStateDisplayer(SnipersTableAdapter sniperTableAdapter) {
+		this.sniperTableAdapter = sniperTableAdapter;
 	}
 
 	@Override
@@ -19,8 +18,8 @@ public class SniperStateDisplayer implements SniperListener {
 	}
 
 	@Override
-	public void sniperBidding() {
-		showStatus(R.string.status_bidding);
+	public void sniperBidding(final SniperState state) {
+		sniperTableAdapter.sniperStatusChanged(state, R.string.status_bidding);
 	};	
 	
 	@Override
@@ -36,7 +35,7 @@ public class SniperStateDisplayer implements SniperListener {
 	public void showStatus(final int statusID){
 		mActivity.runOnUiThread(new Runnable() {
 			public void run() {
-				statusView.setText(statusID);
+
 			}
 		});
 	}

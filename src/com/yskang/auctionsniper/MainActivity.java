@@ -35,7 +35,6 @@ public class MainActivity extends Activity {
 	public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 
 	public Button buttonJoin;
-	public TextView statusView;
 
 	private XMPPConnection connection;
 
@@ -43,10 +42,10 @@ public class MainActivity extends Activity {
 
 	public Handler handler = new Handler();
 
-	public ArrayList<AuctionItem> auctionItemList = new ArrayList<AuctionItem>();
-	
-	public AuctionItemListAdapter mAuctionAdapter;
-	
+	public ArrayList<SniperState> sniperState = new ArrayList<SniperState>();
+
+	public SnipersTableAdapter snipersAdapter;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -55,10 +54,11 @@ public class MainActivity extends Activity {
 		buttonJoin = (Button) findViewById(R.id.button_join);
 		buttonJoin.setOnClickListener(mOnClickListenerJoin);
 
-		mAuctionAdapter = new AuctionItemListAdapter(this, R.layout.auction_list_item, auctionItemList);
-		
-		ListView list = (ListView)findViewById(R.id.AuctionListView);
-		list.setAdapter(mAuctionAdapter);
+		snipersAdapter = new SnipersTableAdapter(this,
+				R.layout.auction_list_item, sniperState);
+
+		ListView list = (ListView) findViewById(R.id.AuctionListView);
+		list.setAdapter(snipersAdapter);
 	}
 
 	@Override
@@ -71,7 +71,6 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			statusView.setText(R.string.status_joining);
 			commThread.start();
 		}
 	};
@@ -115,27 +114,25 @@ public class MainActivity extends Activity {
 
 		this.mConnection = connection;
 
-		AuctionItem auctionItem = new AuctionItem();
-
-		auctionItem.setItemName("item-54321");
-		auctionItem.setLastPrice(100);
-		auctionItem.setLatBid(98);
-		auctionItem.setStatus("init");
-		
-		auctionItemList.add(auctionItem);
-		
-		
 		Auction auction = new XMPPAuction(chat);
 
 		chat.addMessageListener(new AuctionMessageTranslator(connection
 				.getUser(), new AuctionSniper(auction,
-				new SniperStateDisplayer(this))));
+				new SniperStateDisplayer(snipersAdapter))));
 		auction.join();
 	}
 
 	private static String auctionId(String itemId, XMPPConnection connection) {
 		return String.format(AUCTION_ID_FORMAT, itemId,
 				connection.getServiceName());
+	}
+
+	public void showStatusText(String statusText) {
+		snipersAdapter.setStatusText(statusText);
+	}
+
+	public void sniperStatusChanged(SniperState sniperState, String statusText) {
+		snipersAdapter.sniperStatusChanged(sniperState, statusText);
 	}
 
 	@Override

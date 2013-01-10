@@ -8,6 +8,7 @@ import com.yskang.auctionsniper.Auction;
 import com.yskang.auctionsniper.AuctionEventListener.PriceSource;
 import com.yskang.auctionsniper.AuctionSniper;
 import com.yskang.auctionsniper.SniperListener;
+import com.yskang.auctionsniper.SniperState;
 
 import junit.framework.TestCase;
 
@@ -39,7 +40,7 @@ public class AuctionSniperTest extends TestCase {
 			{
 				ignoring(auction);
 
-				allowing(sniperListener).sniperBidding();
+				allowing(sniperListener).sniperBidding(new SniperState("item-54321", 0, 0));
 				then(sniperState.is("bidding"));
 
 				atLeast(1).of(sniperListener).sniperLost();
@@ -66,11 +67,12 @@ public class AuctionSniperTest extends TestCase {
 	public void testBidsHigherAndReportsBiddingWhenNewPriceArrives() {
 		final int price = 1001;
 		final int increment = 25;
+		final int bid = price + increment;
 
 		context.checking(new Expectations() {
 			{
 				one(auction).bid(price + increment);
-				atLeast(1).of(sniperListener).sniperBidding();
+				atLeast(1).of(sniperListener).sniperBidding(new SniperState("item-54321", price, bid));
 			}
 		});
 
