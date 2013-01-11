@@ -127,12 +127,12 @@ public class MainActivity extends Activity {
 				connection.getServiceName());
 	}
 
-	public void showStatusText(String statusText) {
-		snipersAdapter.setStatusText(statusText);
+	public void showStatusText(int statusTextId) {
+		snipersAdapter.setStatusText(statusTextId);
 	}
 
-	public void sniperStatusChanged(SniperState sniperState, String statusText) {
-		snipersAdapter.sniperStatusChanged(sniperState, statusText);
+	public void sniperStatusChanged(SniperState sniperState, int statusTextId) {
+		snipersAdapter.sniperStatusChanged(sniperState, statusTextId);
 	}
 
 	@Override

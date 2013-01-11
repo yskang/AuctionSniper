@@ -4,13 +4,12 @@ public class SniperState {
 	public final String itemId;
 	public final int lastPrice;
 	public final int lastBid;
-	public final int statusId;
+	public final int statusId = R.string.status_init;
 	
-	public SniperState(String itemId, int lastPrice, int lastBid, int statusId){
+	public SniperState(String itemId, int lastPrice, int lastBid){
 		this.itemId = itemId;
 		this.lastPrice = lastPrice;
 		this.lastBid = lastBid;
-		this.statusId = statusId;
 	}
 
 	public String getItemId() {
