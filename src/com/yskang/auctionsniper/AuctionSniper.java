@@ -3,32 +3,37 @@ package com.yskang.auctionsniper;
 public class AuctionSniper implements AuctionEventListener {
 
 	private final SniperListener sniperListener;
-	private Auction mAuction;
-	private boolean isWinning = false;
+	private Auction auction;
+	private SniperSnapshot snapshot;
 
-	public AuctionSniper(Auction auction, SniperListener sniperListener) {
-		this.mAuction = auction;
+	public AuctionSniper(String itemId, Auction auction, SniperListener sniperListener) {
+		this.auction = auction;
 		this.sniperListener = sniperListener;
+		this.snapshot = SniperSnapshot.joining(itemId);
 	}
 
 	@Override
 	public void auctionClosed() {
-		if(isWinning){
-			sniperListener.sniperWon();
-		}else{
-			sniperListener.sniperLost();
-		}
+		snapshot = snapshot.closed();
+		notifyChange();
 	}
 
 	@Override
 	public void currentPrice(int price, int increment, PriceSource priceSource) {
-		isWinning = priceSource == PriceSource.FromSniper;
-		if(isWinning){
-			sniperListener.sniperWinning();
-		}else{
+		switch(priceSource){
+		case FromSniper:
+			snapshot = snapshot.winning(price);
+			break;
+		case FromOtherBidder:
 			int bid = price + increment;
-			mAuction.bid(bid);
-			sniperListener.sniperBidding(new SniperState("item-54321", price, bid));
+			auction.bid(bid);
+			snapshot = snapshot.bidding(price, bid);
+			break;
 		}
+		notifyChange();
+	}
+
+	private void notifyChange() {
+		sniperListener.sniperStateChanged(snapshot);
 	}
 }

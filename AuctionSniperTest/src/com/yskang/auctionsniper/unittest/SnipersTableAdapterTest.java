@@ -1,27 +1,40 @@
 package com.yskang.auctionsniper.unittest;
 
-import java.util.ArrayList;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
 
-import junit.framework.TestCase;
+import android.test.AndroidTestCase;
 
 import com.yskang.auctionsniper.R;
+import com.yskang.auctionsniper.SniperSnapshot;
 import com.yskang.auctionsniper.SniperState;
 import com.yskang.auctionsniper.SnipersTableAdapter;
 
+public class SnipersTableAdapterTest extends AndroidTestCase {
+	private final Mockery context = new Mockery();
+	private AuctionSnipersObserver observer = context.mock(AuctionSnipersObserver.class);
+	private AuctionSnipersDataSetObserver auctionSnipersObserver = new AuctionSnipersDataSetObserver(); 
+	private SnipersTableAdapter snipersTableAdapter;
 
-public class SnipersTableAdapterTest extends TestCase {
-
-	private ArrayList<SniperState> sniperStatelist = new ArrayList<SniperState>();
-	private SnipersTableAdapter snipersTableAdpater = new SnipersTableAdapter(null, R.string.status_init,
-			sniperStatelist);
-	
 	public void testSetsSniperValuesInColumns() {
-		snipersTableAdpater.sniperStatusChanged(new SniperState("item id", 555, 666),
-				R.string.status_bidding);
+		
+		context.checking(new Expectations() {
+			{
+				atLeast(1).of(observer).dataChanged();
+			}
+		});
 
-		assertEquals(snipersTableAdpater.getItem(0).getItemId(), "item id");
-		assertEquals(snipersTableAdpater.getItem(0).getLastPrice(), 555);
-		assertEquals(snipersTableAdpater.getItem(0).getLastBid(), 666);
-		assertEquals(snipersTableAdpater.getItem(0).getStatus(), R.string.status_bidding);
+		snipersTableAdapter = new SnipersTableAdapter(getContext());
+		snipersTableAdapter.registerDataSetObserver(auctionSnipersObserver);
+
+		snipersTableAdapter.sniperStateChanged(new SniperSnapshot("item id", 555,
+				666, SniperState.BIDDING));
+
+		assertEquals("item id", snipersTableAdapter.getItem(0).getItemId());
+		assertEquals(555, snipersTableAdapter.getItem(0).getLastPrice());
+		assertEquals(666, snipersTableAdapter.getItem(0).getLastBid());
+		assertEquals(R.string.status_bidding, snipersTableAdapter.getItem(0).getStatus());
+
+		context.assertIsSatisfied();
 	}
 }

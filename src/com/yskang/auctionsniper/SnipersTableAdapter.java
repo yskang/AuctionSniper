@@ -3,89 +3,109 @@ package com.yskang.auctionsniper;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-public class SnipersTableAdapter extends ArrayAdapter<SniperState> {
-	private final static SniperState STARTING_UP = new SniperState("", 0, 0);
-	private int statusTextId = R.string.status_joining;
-	private SniperState sniperState = STARTING_UP;
-	private ArrayList<SniperState> sniperStateList;
+public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
+	private final static int[] STATUS_TEXT_ID = { R.string.status_joining,
+			R.string.status_bidding, R.string.status_winning,
+			R.string.status_lost, R.string.status_won };
+
+	private final static SniperSnapshot STARTING_UP = new SniperSnapshot("", 0,
+			0, SniperState.WON);
+	private SniperSnapshot snapshot = STARTING_UP;
+	private static ArrayList<SniperSnapshot> snapshotsList = new ArrayList<SniperSnapshot>();
 	private Context context;
-	private TextView mStatusView;
-	
-	public SnipersTableAdapter(Context context, int textViewResourceId,
-			ArrayList<SniperState> sinperStateList) {
-		super(context, textViewResourceId, sinperStateList);
-		this.sniperStateList = sinperStateList;
+
+	public SnipersTableAdapter(Context context) {
+		super(context, R.id.AuctionListView, snapshotsList);
 		this.context = context;
-		
-		this.sniperStateList.add(sniperState);
+		if(this.isEmpty()){
+			this.add(STARTING_UP);
+		}else{
+			SnipersTableAdapter.snapshotsList.set(0, STARTING_UP);
+		}
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent){
+	public View getView(int position, View convertView, ViewGroup parent) {
 		View view = convertView;
-		
-		if(view == null){
-			LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+		if (view == null) {
+			LayoutInflater vi = (LayoutInflater) context
+					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			view = vi.inflate(R.layout.auction_list_item, null);
 		}
-		
-		SniperState item = sniperStateList.get(position);
-		if(item != null){
-			TextView itemNameView = (TextView)view.findViewById(R.id.itemName);
-			TextView lastPriceView = (TextView)view.findViewById(R.id.lastPrice);
-			TextView lastBidView = (TextView)view.findViewById(R.id.lastBid);
-			mStatusView	= (TextView)view.findViewById(R.id.itemStatus);
-			
-			if(itemNameView != null){
+
+		SniperSnapshot item = snapshotsList.get(position);
+		if (item != null) {
+			TextView itemNameView = (TextView) view.findViewById(R.id.itemName);
+			TextView lastPriceView = (TextView) view
+					.findViewById(R.id.lastPrice);
+			TextView lastBidView = (TextView) view.findViewById(R.id.lastBid);
+			TextView statusView = (TextView) view.findViewById(R.id.itemStatus);
+
+			if (itemNameView != null) {
 				itemNameView.setText(item.getItemId());
 			}
-			if(lastPriceView != null){
+			if (lastPriceView != null) {
 				lastPriceView.setText(Integer.toString(item.getLastPrice()));
 			}
-			if(lastBidView != null){
+			if (lastBidView != null) {
 				lastBidView.setText(Integer.toString(item.getLastBid()));
+			}
+			if (statusView != null) {
+				statusView.setText(textFor(item.getStatus()));
 			}
 		}
 		return view;
 	}
 
-	public int getColumnCount(){
-		return sniperStateList.size();
-	}
-	
-	public int getRowCount(){
-		return 1;
-	}
-	
-	public Object getValueAt(int rowIndex, int columnIndex){
-		switch(Column.at(columnIndex)){
-		case ITEM_IDENTIFIER:
-			return sniperState.itemId;
-		case LAST_PRICE:
-			return sniperState.lastPrice;
-		case LAST_BID:
-			return sniperState.lastBid;
-		case SNIPER_STATUS:
-			return statusTextId;
-		default:
-			throw new IllegalArgumentException("No column at" + columnIndex);
-		}
-	}
-	
-	public void setStatusText(int newStatusTextId) {
-		statusTextId = newStatusTextId;
-		mStatusView.setText(newStatusTextId);
+	public int getColumnCount() {
+		return snapshotsList.size();
 	}
 
-	public void sniperStatusChanged(SniperState newSniperState, int newStatusTextId) {
-		sniperState = newSniperState;
-		statusTextId = newStatusTextId;
-		this.notifyDataSetChanged();
+	public int getRowCount() {
+		return 1;
+	}
+
+	public Object getValueAt(int rowIndex, int columnIndex) {
+		return Column.at(columnIndex).valueIn(snapshot);
+	}
+
+	public void sniperStateChanged(SniperSnapshot newSnapshot) {
+		Log.d("yskang", String.format("Sniper State changed: (ID: %s, State: %s)", newSnapshot.getItemId(), newSnapshot.getStatus()));
+		snapshotsList.set(0, newSnapshot);
+		this.snapshot = newSnapshot;
+		notifyDataSetChanged();
+	}
+
+	public static int textFor(SniperState state) {
+		int stateStringId = 0;
+		switch (state) {
+		case JOINING:
+			stateStringId = STATUS_TEXT_ID[0];
+			break;
+		case BIDDING:
+			stateStringId = STATUS_TEXT_ID[1];
+			break;
+		case WINNING:
+			stateStringId = STATUS_TEXT_ID[2];
+			break;
+		case LOST:
+			stateStringId = STATUS_TEXT_ID[3];
+			break;
+		case WON:
+			stateStringId = STATUS_TEXT_ID[4];
+			break;
+		default:
+			Log.d("yskang", "return state is not proper");
+			break;
+		}
+		return stateStringId;
 	}
 }
