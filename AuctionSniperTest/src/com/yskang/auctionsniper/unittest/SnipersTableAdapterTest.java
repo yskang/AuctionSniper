@@ -13,7 +13,7 @@ import com.yskang.auctionsniper.SnipersTableAdapter;
 public class SnipersTableAdapterTest extends AndroidTestCase {
 	private final Mockery context = new Mockery();
 	private AuctionSnipersObserver observer = context.mock(AuctionSnipersObserver.class);
-	private AuctionSnipersDataSetObserver auctionSnipersObserver = new AuctionSnipersDataSetObserver(); 
+	private AuctionSnipersDataSetObserver auctionSnipersObserver = new AuctionSnipersDataSetObserver(observer); 
 	private SnipersTableAdapter snipersTableAdapter;
 
 	public void testSetsSniperValuesInColumns() {
@@ -33,7 +33,7 @@ public class SnipersTableAdapterTest extends AndroidTestCase {
 		assertEquals("item id", snipersTableAdapter.getItem(0).getItemId());
 		assertEquals(555, snipersTableAdapter.getItem(0).getLastPrice());
 		assertEquals(666, snipersTableAdapter.getItem(0).getLastBid());
-		assertEquals(R.string.status_bidding, snipersTableAdapter.getItem(0).getStatus());
+		assertEquals(SniperState.BIDDING, snipersTableAdapter.getItem(0).getStatus());
 
 		context.assertIsSatisfied();
 	}

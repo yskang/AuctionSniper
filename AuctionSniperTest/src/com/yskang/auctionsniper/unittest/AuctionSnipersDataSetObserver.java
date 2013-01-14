@@ -3,19 +3,16 @@ package com.yskang.auctionsniper.unittest;
 import android.database.DataSetObserver;
 import android.util.Log;
 
-public class AuctionSnipersDataSetObserver extends DataSetObserver implements
-		AuctionSnipersObserver {
-	private final static String LOGTAG = "AuctionSniperLog";
+public class AuctionSnipersDataSetObserver extends DataSetObserver{
+	private AuctionSnipersObserver observer;
+
+	public AuctionSnipersDataSetObserver(AuctionSnipersObserver observer) {
+		this.observer = observer;
+	}
 
 	@Override
 	public void onChanged() {
-		dataChanged();
+		observer.dataChanged();
 		super.onChanged();
 	}
-
-	@Override
-	public void dataChanged() {
-		Log.d(LOGTAG, "data has been changed.");
-	}
-
 }

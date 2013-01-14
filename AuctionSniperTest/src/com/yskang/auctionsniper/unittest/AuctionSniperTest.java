@@ -34,7 +34,7 @@ public class AuctionSniperTest extends TestCase {
 	public void testReportsLostIfAuctionClosesImmediately() {
 		context.checking(new Expectations() {
 			{
-				atLeast(1).of(sniperListener).sniperStateChanged(new SniperSnapshot(auctionItem, 135, 135, SniperState.LOST));
+				atLeast(1).of(sniperListener).sniperStateChanged(new SniperSnapshot(auctionItem, 0, 0, SniperState.LOST));
 			}
 		});
 
@@ -74,7 +74,7 @@ public class AuctionSniperTest extends TestCase {
 	public void testReportsLostWhenAuctionCloses() {
 		context.checking(new Expectations() {
 			{
-				one(sniperListener).sniperStateChanged(new SniperSnapshot(auctionItem, 135, 135, SniperState.LOST));
+				one(sniperListener).sniperStateChanged(new SniperSnapshot(auctionItem, 0, 0, SniperState.LOST));
 			}
 		});
 
@@ -102,7 +102,7 @@ public class AuctionSniperTest extends TestCase {
 	public void testReportsIsWinningWhenCurrentPriceComesFromSniper() {
 		context.checking(new Expectations() {
 			{
-				atLeast(1).of(sniperListener).sniperStateChanged(new SniperSnapshot(auctionItem, 123, 45, SniperState.WINNING));
+				atLeast(1).of(sniperListener).sniperStateChanged(new SniperSnapshot(auctionItem, 123, 0, SniperState.WINNING));
 			}
 		});
 		sniper.currentPrice(123, 45, PriceSource.FromSniper);
@@ -113,10 +113,10 @@ public class AuctionSniperTest extends TestCase {
 		context.checking(new Expectations() {
 			{
 				ignoring(auction);
-				allowing(sniperListener).sniperStateChanged(new SniperSnapshot(auctionItem, 123, 45, SniperState.WINNING));
+				allowing(sniperListener).sniperStateChanged(new SniperSnapshot(auctionItem, 123, 0, SniperState.WINNING));
 
 				then(sniperState.is("winning"));
-				atLeast(1).of(sniperListener).sniperStateChanged(new SniperSnapshot(auctionItem, 123, 45, SniperState.WON));
+				atLeast(1).of(sniperListener).sniperStateChanged(new SniperSnapshot(auctionItem, 123, 0, SniperState.WON));
 				when(sniperState.is("winning"));
 			}
 		});
