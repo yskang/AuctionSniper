@@ -4,6 +4,8 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.packet.Message;
 
+import android.util.Log;
+
 public class AuctionMessageTranslator implements MessageListener {
 	private static final String EVENT_TYPE_PRICE = "PRICE";
 	private static final String EVENT_TYPE_CLOSE = "CLOSE";
@@ -19,6 +21,8 @@ public class AuctionMessageTranslator implements MessageListener {
 	public void processMessage(Chat chat, Message message) {
 		AuctionEvent event = AuctionEvent.from(message.getBody());
 		String eventType = event.type();
+		
+		Log.d("yskang", "Sniper receive message: " + event);
 		
 		if (EVENT_TYPE_CLOSE.equals(eventType)) {
 			auctionEventListener.auctionClosed();

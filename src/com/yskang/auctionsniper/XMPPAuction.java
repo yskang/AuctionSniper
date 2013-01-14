@@ -3,6 +3,8 @@ package com.yskang.auctionsniper;
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.XMPPException;
 
+import android.util.Log;
+
 public class XMPPAuction implements Auction {
 	
 	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
@@ -26,6 +28,7 @@ public class XMPPAuction implements Auction {
 	
 	private void sendMessage(final String message){
 		try {
+			Log.d("yskang", "Sniper send message: " + message);
 			mChat.sendMessage(message);
 		} catch (XMPPException e) {
 			e.printStackTrace();

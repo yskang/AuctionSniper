@@ -1,5 +1,7 @@
 package com.yskang.auctionsniper.test;
 
+import android.util.Log;
+
 import com.jayway.android.robotium.solo.Solo;
 
 import static junit.framework.Assert.assertTrue;
@@ -13,7 +15,8 @@ public class AuctionSniperDriver {
 	}
 
 	public void showsSniperStatus(String status) {
-		assertTrue("status does not match.", solo.waitForText(status, 1, 5000));;
+		assertTrue("status does not match.", solo.waitForText(status, 1, 5000));
+		Log.d("yskang", "Fake server receive message: " + status);
 	}
 
 	public void dispose() {
