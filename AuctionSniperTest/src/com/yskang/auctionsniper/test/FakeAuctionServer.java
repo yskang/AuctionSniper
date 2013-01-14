@@ -8,6 +8,8 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
+import android.util.Log;
+
 import com.yskang.auctionsniper.MainActivity;
 
 public class FakeAuctionServer {
@@ -19,7 +21,7 @@ public class FakeAuctionServer {
 	private static final String AUCTION_PASSWORD = "auction";
 	private final String itemId;
 	private final XMPPConnection connection;
-	private Chat currentChat;
+	private static Chat currentChat;
 
 	public FakeAuctionServer(String itemId) {
 		this.itemId = itemId;
@@ -41,6 +43,7 @@ public class FakeAuctionServer {
 	}
 
 	public void announceClosed() throws XMPPException {
+		Log.d("yskang", "Fake server send : CLOSE");
 		currentChat.sendMessage("SOLVersion: 1.1; Event: CLOSE;");
 	}
 
@@ -66,11 +69,15 @@ public class FakeAuctionServer {
 	}
 
 	private void receivesAMessageMatching(String sniperId, String commandFormat) throws InterruptedException {
+		Log.d("yskang", "Fake server current chat is : " + currentChat);
+
+		String participant = currentChat.getParticipant();
 		String[] idArray;
-		idArray = currentChat.getParticipant().split("@");
 		
+		idArray = participant.split("@");
+				
 		messageListener.receivesAMessage(commandFormat);
-		assertEquals(idArray[0], sniperId);
+		assertEquals("sniper ID does not match", idArray[0], sniperId);
 	}
 
 	public String getItemId() {
