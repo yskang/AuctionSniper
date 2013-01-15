@@ -4,6 +4,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 
 import android.test.AndroidTestCase;
+import android.util.Log;
 
 import com.yskang.auctionsniper.Column;
 import com.yskang.auctionsniper.SniperSnapshot;
@@ -30,7 +31,7 @@ public class SnipersTableAdapterTest extends AndroidTestCase {
 		snipersTableAdapter.registerDataSetObserver(auctionSnipersObserver);
 
 		SniperSnapshot joining = SniperSnapshot.joining("item id");
-		SniperSnapshot bidding = SniperSnapshot.bidding(555, 666);
+		SniperSnapshot bidding = joining.bidding(555, 666);
 
 		snipersTableAdapter.addSniper(joining);
 		snipersTableAdapter.sniperStateChanged(bidding);
@@ -72,8 +73,11 @@ public class SnipersTableAdapterTest extends AndroidTestCase {
 		
 		snipersTableAdapter = new SnipersTableAdapter(getContext());
 		
-		snipersTableAdapter.addSniper(SniperSnapshot.joining("item 0"));
-		snipersTableAdapter.addSniper(SniperSnapshot.joining("item 1"));
+		SniperSnapshot item0 = SniperSnapshot.joining("item 0");
+		SniperSnapshot item1 = SniperSnapshot.joining("item 1");
+		
+		snipersTableAdapter.addSniper(item0);
+		snipersTableAdapter.addSniper(item1);
 		
 		assertEquals("item 0", snipersTableAdapter.getItem(0).getItemId());
 		assertEquals("item 1", snipersTableAdapter.getItem(1).getItemId());
