@@ -108,4 +108,8 @@ public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
 		}
 		return stateStringId;
 	}
+
+	public void addSniper(SniperSnapshot snapshot) {
+		this.add(snapshot);
+	}
 }

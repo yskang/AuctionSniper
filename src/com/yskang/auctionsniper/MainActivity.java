@@ -101,6 +101,8 @@ public class MainActivity extends Activity {
 	public void joinAuction(XMPPConnection connection, String itemId)
 			throws XMPPException {
 
+		safelyAddItemToModel(itemId);
+		
 		mChat = connection.getChatManager().createChat(
 				auctionId(itemId, connection), null);
 		this.mConnection = connection;
@@ -109,6 +111,14 @@ public class MainActivity extends Activity {
 				.getUser(), new AuctionSniper(itemId, auction,
 				new UIThreadSniperListener(this, snipers))));
 		auction.join();
+	}
+
+	private void safelyAddItemToModel(final String itemId) {
+		this.runOnUiThread(new Runnable(){
+			public void run(){
+				snipers.add(SniperSnapshot.joining(itemId));
+			}
+		});
 	}
 
 	private static String auctionId(String itemId, XMPPConnection connection) {
