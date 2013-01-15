@@ -2,6 +2,9 @@ package com.yskang.auctionsniper.test;
 
 import static junit.framework.Assert.assertEquals;
 
+import org.hamcrest.Matcher;
+import static org.hamcrest.Matchers.equalTo;
+
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -60,15 +63,15 @@ public class FakeAuctionServer {
 
 	public void hasReceivedJoinRequestFrom(String sniperId)
 			throws InterruptedException {
-		receivesAMessageMatching(sniperId, MainActivity.JOIN_COMMAND_FORMAT);
+		receivesAMessageMatching(sniperId, equalTo(MainActivity.JOIN_COMMAND_FORMAT));
 	}
 
 	public void hasReceivedBid(int bid, String sniperId)
 			throws InterruptedException {
-		receivesAMessageMatching(sniperId, String.format(MainActivity.BID_COMMAND_FORMAT, bid));
+		receivesAMessageMatching(sniperId, equalTo(String.format(MainActivity.BID_COMMAND_FORMAT, bid)));
 	}
 
-	private void receivesAMessageMatching(String sniperId, String commandFormat) throws InterruptedException {
+	private void receivesAMessageMatching(String sniperId, Matcher<? super String> messagematcher) throws InterruptedException {
 		Log.d("yskang", "Fake server current chat is : " + currentChat);
 
 		String participant = currentChat.getParticipant();
@@ -76,7 +79,7 @@ public class FakeAuctionServer {
 		
 		idArray = participant.split("@");
 				
-		messageListener.receivesAMessage(commandFormat);
+		messageListener.receivesAMessage(messagematcher);
 		assertEquals("sniper ID does not match", idArray[0], sniperId);
 	}
 
