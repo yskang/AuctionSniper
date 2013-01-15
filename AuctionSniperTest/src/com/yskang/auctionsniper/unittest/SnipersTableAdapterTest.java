@@ -120,7 +120,7 @@ public class SnipersTableAdapterTest extends AndroidTestCase {
 		context.assertIsSatisfied();
 	}
 	
-	void testThrowsDefectIfNoExistingSniperForAnUpdate(){
+	public void testThrowsDefectIfNoExistingSniperForAnUpdate(){
 		context.checking(new Expectations() {
 			{
 				ignoring(observer);
