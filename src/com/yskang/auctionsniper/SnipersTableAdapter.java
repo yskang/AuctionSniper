@@ -80,11 +80,11 @@ public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
 			if(snapshotsList.get(i).getItemId().compareTo(itemId) == 0)
 			{
 				snapshotsList.set(i, newSnapshot);
-				break;
+				notifyDataSetChanged();
+				return;
 			}
 		}
-
-		notifyDataSetChanged();
+		throw new Defect("Cannot find match for " + newSnapshot);
 	}
 
 	public static int textFor(SniperState state) {
