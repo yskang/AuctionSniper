@@ -27,10 +27,13 @@ public class SnipersTableAdapterTest extends AndroidTestCase {
 
 		snipersTableAdapter = new SnipersTableAdapter(getContext());
 		snipersTableAdapter.registerDataSetObserver(auctionSnipersObserver);
-		snipersTableAdapter.addSniper(new SniperSnapshot("no item id",
-				111, 222, SniperState.JOINING));
-		snipersTableAdapter.sniperStateChanged(new SniperSnapshot("item id",
-				555, 666, SniperState.BIDDING));
+		
+		SniperSnapshot joining = SniperSnapshot.joining("item id");
+		SniperSnapshot bidding = SniperSnapshot.bidding(555, 666);
+		
+		snipersTableAdapter.addSniper(joining);
+		snipersTableAdapter.sniperStateChanged(bidding);
+		
 
 		assertEquals("item id", snipersTableAdapter.getItem(0).getItemId());
 		assertEquals(555, snipersTableAdapter.getItem(0).getLastPrice());

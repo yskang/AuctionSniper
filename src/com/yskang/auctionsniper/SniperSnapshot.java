@@ -5,13 +5,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class SniperSnapshot {
-	public String itemId;
+	public static String itemId;
 	public int lastPrice;
 	public int lastBid;
 	public SniperState state;
 	
 	public SniperSnapshot(String itemId, int lastPrice, int lastBid, SniperState sniperState){
-		this.itemId = itemId;
+		SniperSnapshot.itemId = itemId;
 		this.lastPrice = lastPrice;
 		this.lastBid = lastBid;
 		this.state = sniperState;
@@ -56,7 +56,7 @@ public class SniperSnapshot {
 		return new SniperSnapshot(itemId, newLastPrice, lastBid, SniperState.WINNING);
 	}
 
-	public SniperSnapshot bidding(int newLastPrice, int newLastBid) {
+	public static SniperSnapshot bidding(int newLastPrice, int newLastBid) {
 		return new SniperSnapshot(itemId, newLastPrice, newLastBid, SniperState.BIDDING);
 	}
 
