@@ -99,13 +99,24 @@ public class SnipersTableAdapterTest extends AndroidTestCase {
 		snipersTableAdapter.addSniper(item1);
 		snipersTableAdapter.addSniper(item2);
 		
-		item1.bidding(10, 20);
-		snipersTableAdapter.sniperStateChanged(item1);
+		SniperSnapshot item1Modified = item1.bidding(41, 74);
+		snipersTableAdapter.sniperStateChanged(item1Modified);
+
+		assertEquals("item 0", snipersTableAdapter.getItem(0).getItemId());
+		assertEquals(0, snipersTableAdapter.getItem(0).getLastPrice());
+		assertEquals(0, snipersTableAdapter.getItem(0).getLastBid());
+		assertEquals(SniperState.JOINING, snipersTableAdapter.getItem(0).getStatus());
+		
 		assertEquals("item 1", snipersTableAdapter.getItem(1).getItemId());
-		assertEquals(10, snipersTableAdapter.getItem(1).getLastPrice());
-		assertEquals(20, snipersTableAdapter.getItem(1).getLastBid());
+		assertEquals(41, snipersTableAdapter.getItem(1).getLastPrice());
+		assertEquals(74, snipersTableAdapter.getItem(1).getLastBid());
 		assertEquals(SniperState.BIDDING, snipersTableAdapter.getItem(1).getStatus());
 
+		assertEquals("item 2", snipersTableAdapter.getItem(2).getItemId());
+		assertEquals(0, snipersTableAdapter.getItem(2).getLastPrice());
+		assertEquals(0, snipersTableAdapter.getItem(2).getLastBid());
+		assertEquals(SniperState.JOINING, snipersTableAdapter.getItem(2).getStatus());
+		
 		context.assertIsSatisfied();
 	}
 }

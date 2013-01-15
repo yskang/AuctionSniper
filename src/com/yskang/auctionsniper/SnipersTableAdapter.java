@@ -74,8 +74,16 @@ public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
 
 	public void sniperStateChanged(SniperSnapshot newSnapshot) {
 		Log.d("yskang", String.format("Sniper State changed: (ID: %s, State: %s)", newSnapshot.getItemId(), newSnapshot.getStatus()));
-		snapshotsList.set(0, newSnapshot);
-		this.snapshot = newSnapshot;
+		int i;
+		String itemId = newSnapshot.getItemId();
+		for(i = 0 ; i < snapshotsList.size() ; i++){
+			if(snapshotsList.get(i).getItemId().compareTo(itemId) == 0)
+			{
+				snapshotsList.set(i, newSnapshot);
+				break;
+			}
+		}
+
 		notifyDataSetChanged();
 	}
 
