@@ -18,17 +18,12 @@ public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
 	private final static SniperSnapshot STARTING_UP = new SniperSnapshot("", 0,
 			0, SniperState.WON);
 	private SniperSnapshot snapshot = STARTING_UP;
-	private static ArrayList<SniperSnapshot> snapshotsList = new ArrayList<SniperSnapshot>();
+	private ArrayList<SniperSnapshot> snapshotsList = new ArrayList<SniperSnapshot>();
 	private Context context;
 
 	public SnipersTableAdapter(Context context) {
-		super(context, R.id.AuctionListView, snapshotsList);
+		super(context, R.id.AuctionListView);
 		this.context = context;
-		if(this.isEmpty()){
-			this.add(STARTING_UP);
-		}else{
-			SnipersTableAdapter.snapshotsList.set(0, STARTING_UP);
-		}
 	}
 
 	@Override
@@ -66,11 +61,11 @@ public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
 	}
 
 	public int getColumnCount() {
-		return snapshotsList.size();
+		return 4;
 	}
 
 	public int getRowCount() {
-		return 1;
+		return snapshotsList.size();
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
@@ -110,6 +105,14 @@ public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
 	}
 
 	public void addSniper(SniperSnapshot snapshot) {
-		this.add(snapshot);
+		snapshotsList.add(snapshot);
+		notifyDataSetChanged();
 	}
+
+	@Override
+	public SniperSnapshot getItem(int position) {
+		return snapshotsList.get(position);
+	}
+	
+	
 }

@@ -5,7 +5,6 @@ import org.jmock.Mockery;
 
 import android.test.AndroidTestCase;
 
-import com.yskang.auctionsniper.R;
 import com.yskang.auctionsniper.SniperSnapshot;
 import com.yskang.auctionsniper.SniperState;
 import com.yskang.auctionsniper.SnipersTableAdapter;
@@ -28,7 +27,8 @@ public class SnipersTableAdapterTest extends AndroidTestCase {
 
 		snipersTableAdapter = new SnipersTableAdapter(getContext());
 		snipersTableAdapter.registerDataSetObserver(auctionSnipersObserver);
-
+		snipersTableAdapter.addSniper(new SniperSnapshot("no item id",
+				111, 222, SniperState.JOINING));
 		snipersTableAdapter.sniperStateChanged(new SniperSnapshot("item id",
 				555, 666, SniperState.BIDDING));
 

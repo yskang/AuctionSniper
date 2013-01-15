@@ -116,7 +116,7 @@ public class MainActivity extends Activity {
 	private void safelyAddItemToModel(final String itemId) {
 		this.runOnUiThread(new Runnable(){
 			public void run(){
-				snipers.add(SniperSnapshot.joining(itemId));
+				snipers.addSniper(SniperSnapshot.joining(itemId));
 			}
 		});
 	}
