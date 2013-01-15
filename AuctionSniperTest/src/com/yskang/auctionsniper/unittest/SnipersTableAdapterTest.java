@@ -48,10 +48,15 @@ public class SnipersTableAdapterTest extends AndroidTestCase {
 				one(observer).dataChanged();
 			}
 		});
+
+		snipersTableAdapter = new SnipersTableAdapter(getContext());
+		snipersTableAdapter.registerDataSetObserver(auctionSnipersObserver);
 		
 		assertEquals(0, snipersTableAdapter.getRowCount());
 		snipersTableAdapter.addSniper(joining);
 		assertEquals(1, snipersTableAdapter.getRowCount());
 		assertEquals(snipersTableAdapter.getItem(0), joining);
+		
+		context.assertIsSatisfied();
 	}
 }
