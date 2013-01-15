@@ -119,4 +119,35 @@ public class SnipersTableAdapterTest extends AndroidTestCase {
 		
 		context.assertIsSatisfied();
 	}
+	
+	void testThrowsDefectIfNoExistingSniperForAnUpdate(){
+		context.checking(new Expectations() {
+			{
+				ignoring(observer);
+			}
+		});
+		
+		snipersTableAdapter = new SnipersTableAdapter(getContext());
+		
+		SniperSnapshot item0 = SniperSnapshot.joining("item 0");
+		SniperSnapshot item1 = SniperSnapshot.joining("item 1");
+		SniperSnapshot item2 = SniperSnapshot.joining("item 2");
+		SniperSnapshot item4 = SniperSnapshot.joining("item 4");
+		
+		snipersTableAdapter.addSniper(item0);
+		snipersTableAdapter.addSniper(item1);
+		snipersTableAdapter.addSniper(item2);
+		
+		SniperSnapshot item4Modified = item4.bidding(41, 74);
+		
+		try{
+			snipersTableAdapter.sniperStateChanged(item4Modified);
+			fail("Cannot find match for ");
+		}
+		catch(Exception e){
+
+		}
+		
+		context.assertIsSatisfied();
+	}
 }
