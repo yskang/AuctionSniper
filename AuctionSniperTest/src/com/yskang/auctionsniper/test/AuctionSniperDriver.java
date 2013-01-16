@@ -29,7 +29,7 @@ public class AuctionSniperDriver {
 
 	public void showsSniperStatus(String itemId, int lastPrice, int lastBid,
 			String status) {
-		assertTrue("status does not match.", solo.searchText(itemId));;
+		assertTrue("status does not match.", solo.waitForText(itemId));;
 		assertTrue("status does not match.", solo.searchText(Integer.toString(lastPrice)));;
 		assertTrue("status does not match.", solo.searchText(Integer.toString(lastBid)));;
 		assertTrue("status does not match.", solo.searchText(status));;

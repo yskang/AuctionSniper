@@ -1,9 +1,9 @@
 package com.yskang.auctionsniper.test;
 
+import android.test.ActivityInstrumentationTestCase2;
+
 import com.jayway.android.robotium.solo.Solo;
 import com.yskang.auctionsniper.MainActivity;
-
-import android.test.ActivityInstrumentationTestCase2;
 
 public class AuctionSniperEndToEndTest extends
 		ActivityInstrumentationTestCase2<MainActivity> {
@@ -26,6 +26,7 @@ public class AuctionSniperEndToEndTest extends
 	}
 
 	public void test_1_SingleJoinLostWithoutBidding() throws Exception {
+		
 		auction.startSellingItem();
 		application.startBiddingIn(auction);
 		auction.hasReceivedJoinRequestFrom(ApplicationRunner.SNIPER_XMPP_ID);

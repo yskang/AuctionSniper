@@ -63,7 +63,6 @@ public class MainActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			commThread.start();
-			sniperStateChanged(new SniperSnapshot(SNIPER_ITEM_ID, 0, 0, SniperState.JOINING));
 		}
 	};
 
@@ -94,7 +93,8 @@ public class MainActivity extends Activity {
 		}
 
 		public void run() {
-			mConnection.disconnect();
+			if (mConnection != null)
+				mConnection.disconnect();
 		}
 	}
 
@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
 			throws XMPPException {
 
 		safelyAddItemToModel(itemId);
-		
+
 		mChat = connection.getChatManager().createChat(
 				auctionId(itemId, connection), null);
 		this.mConnection = connection;
@@ -114,8 +114,8 @@ public class MainActivity extends Activity {
 	}
 
 	private void safelyAddItemToModel(final String itemId) {
-		this.runOnUiThread(new Runnable(){
-			public void run(){
+		this.runOnUiThread(new Runnable() {
+			public void run() {
 				snipers.addSniper(SniperSnapshot.joining(itemId));
 			}
 		});
