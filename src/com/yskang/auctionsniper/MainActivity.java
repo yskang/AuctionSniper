@@ -1,5 +1,7 @@
 package com.yskang.auctionsniper;
 
+import java.util.ArrayList;
+
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
@@ -33,7 +35,7 @@ public class MainActivity extends Activity {
 
 	public Button buttonJoin;
 	private XMPPConnection connection;
-	public Thread commThread = new Thread(new Comm());
+	public ArrayList<Thread> commThread = new ArrayList<Thread>(); 
 	public Handler handler = new Handler();
 	public SnipersTableAdapter snipers;
 	private static Chat mChat;
@@ -62,7 +64,8 @@ public class MainActivity extends Activity {
 
 		@Override
 		public void onClick(View v) {
-			commThread.start();
+			commThread.add(new Thread(new Comm()));
+			commThread.get(0).start();
 		}
 	};
 
