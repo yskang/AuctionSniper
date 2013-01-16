@@ -74,17 +74,20 @@ public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
 
 	public void sniperStateChanged(SniperSnapshot newSnapshot) {
 		Log.d("yskang", String.format("Sniper State changed: (ID: %s, State: %s)", newSnapshot.getItemId(), newSnapshot.getStatus()));
-		int i;
-		String itemId = newSnapshot.getItemId();
-		for(i = 0 ; i < snapshotsList.size() ; i++){
-			if(snapshotsList.get(i).getItemId().compareTo(itemId) == 0)
+		int row = rowMatching(newSnapshot);
+		snapshotsList.set(row, newSnapshot);
+		notifyDataSetChanged();
+	}
+	
+	private int rowMatching(SniperSnapshot snapshot){
+		for(int i = 0 ; i < snapshotsList.size() ; i++){
+			if(snapshot.isForSameItemAs(snapshotsList.get(i)))
 			{
-				snapshotsList.set(i, newSnapshot);
-				notifyDataSetChanged();
-				return;
+				return i;
 			}
+			
 		}
-		throw new Defect("Cannot find match for " + newSnapshot);
+		throw new Defect("Cannot find match for " + snapshot);
 	}
 
 	public static int textFor(SniperState state) {
