@@ -1,8 +1,9 @@
 package com.yskang.auctionsniper.test;
 
-import static junit.framework.Assert.assertEquals;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
+
 import static org.hamcrest.Matchers.equalTo;
 
 import org.jivesoftware.smack.Chat;
@@ -16,7 +17,7 @@ import android.util.Log;
 import com.yskang.auctionsniper.MainActivity;
 
 public class FakeAuctionServer {
-	private final SingleMessageListener messageListener = new SingleMessageListener();
+	private static SingleMessageListener messageListener ;
 
 	public static final String ITEM_ID_AS_LOGIN = "auction-%s";
 	public static final String AUCTION_RESOURCE = "Auction";
@@ -31,12 +32,15 @@ public class FakeAuctionServer {
 		ConnectionConfiguration connConfig = new ConnectionConfiguration(
 				"localhost", 5222, "localhost");
 		this.connection = new XMPPConnection(connConfig);
+		messageListener = new SingleMessageListener(itemId);
 	}
 
 	public void startSellingItem() throws XMPPException {
 		connection.connect();
+		Log.d("yskang", "Fake server connect complete");
 		connection.login(String.format(ITEM_ID_AS_LOGIN, itemId),
 				AUCTION_PASSWORD, AUCTION_RESOURCE);
+		Log.d("yskang", "Fake server login complete");
 		connection.getChatManager().addChatListener(new ChatManagerListener() {
 			public void chatCreated(Chat chat, boolean createdLocally) {
 				currentChat = chat;
@@ -56,6 +60,9 @@ public class FakeAuctionServer {
 
 	public void reportPrice(int price, int increment, String bidder)
 			throws XMPPException {
+		Log.d("yskang", "Fake server send : " + String.format("ItemId: %s, SOLVersion: 1.1; Event: PRICE; "
+				+ "CurrentPrice: %d; Increment: %d; Bidder: %s;", itemId, price,
+				increment, bidder));
 		currentChat.sendMessage(String.format("SOLVersion: 1.1; Event: PRICE; "
 				+ "CurrentPrice: %d; Increment: %d; Bidder: %s;", price,
 				increment, bidder));
@@ -72,15 +79,8 @@ public class FakeAuctionServer {
 	}
 
 	private void receivesAMessageMatching(String sniperId, Matcher<? super String> messagematcher) throws InterruptedException {
-		Log.d("yskang", "Fake server current chat is : " + currentChat);
-
-		String participant = currentChat.getParticipant();
-		String[] idArray;
-		
-		idArray = participant.split("@");
-				
 		messageListener.receivesAMessage(messagematcher);
-		assertEquals("sniper ID does not match", idArray[0], sniperId);
+		assertThat(currentChat.getParticipant(), Matchers.startsWith(sniperId + "@"));
 	}
 
 	public String getItemId() {

@@ -10,6 +10,7 @@ import org.jivesoftware.smack.XMPPException;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -21,9 +22,8 @@ public class MainActivity extends Activity {
 	private static final String SNIPER_USERNAME = "sniper";
 	private static final String SNIPER_PASSWORD = "sniper";
 	private static final int SNIPER_PORT = 5222;
-	private static final String SNIPER_ITEM_ID = "item-54321";
 
-	private XMPPConnection mConnection;
+	private static final String[] SNIPER_ITEM_ID_ARRAY = {"item-54321", "item-65432"};
 
 	public static final String AUCTION_RESOURCE = "Auction";
 	public static final String ITEM_ID_AS_LOGIN = "auction-%s";
@@ -33,12 +33,28 @@ public class MainActivity extends Activity {
 	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
 	public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 
+	public static int chatIndex = 0;
+	
+	public static int getChatIndex() {
+		Log.d("yskang", "chatIndex : " + chatIndex);
+		return chatIndex;
+	}
+
+	public static void setChatIndex(int chatIndex) {
+		MainActivity.chatIndex = chatIndex;
+	}
+	
+	public static void increaseChatIndex() {
+		MainActivity.chatIndex++;
+		Log.d("yskang", "increase chatIndex, chatIndex : " + chatIndex);
+	}
+
 	public Button buttonJoin;
-	private XMPPConnection connection;
-	public ArrayList<Thread> commThread = new ArrayList<Thread>(); 
+	private static XMPPConnection connection;
+	public Thread commThread = new Thread(); 
 	public Handler handler = new Handler();
 	public SnipersTableAdapter snipers;
-	private static Chat mChat;
+	private static ArrayList<Chat> mChat = new ArrayList<Chat>();;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +69,17 @@ public class MainActivity extends Activity {
 		ListView list = (ListView) findViewById(R.id.AuctionListView);
 		list.setAdapter(snipers);
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		connectToServer();
+	}
+
+	public void connectToServer(){
+		commThread = new Thread(new Comm());
+		commThread.start();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -61,27 +88,28 @@ public class MainActivity extends Activity {
 	}
 
 	View.OnClickListener mOnClickListenerJoin = new View.OnClickListener() {
-
+		
 		@Override
 		public void onClick(View v) {
-			commThread.add(new Thread(new Comm()));
-			commThread.get(0).start();
+			try {
+				joinAuction(connection, SNIPER_ITEM_ID_ARRAY[getChatIndex()]);
+			} catch (XMPPException e) {
+				e.printStackTrace();
+			}
 		}
 	};
 
 	class Comm implements Runnable {
 		public void run() {
 			try {
-
 				ConnectionConfiguration connConfig = new ConnectionConfiguration(
 						SNIPER_HOSTNAME, SNIPER_PORT, SNIPER_HOSTNAME);
 				connection = new XMPPConnection(connConfig);
-
 				connection.connect();
+				Log.d("yskang", "sinper connect complete");
 				connection.login(SNIPER_USERNAME, SNIPER_PASSWORD,
 						AUCTION_RESOURCE);
-
-				joinAuction(connection, SNIPER_ITEM_ID);
+				Log.d("yskang", "sinper login complete");
 			} catch (XMPPException e) {
 				e.printStackTrace();
 			}
@@ -96,8 +124,9 @@ public class MainActivity extends Activity {
 		}
 
 		public void run() {
-			if (mConnection != null)
-				mConnection.disconnect();
+				if(mConnection != null){
+					mConnection.disconnect();
+				}
 		}
 	}
 
@@ -105,15 +134,19 @@ public class MainActivity extends Activity {
 			throws XMPPException {
 
 		safelyAddItemToModel(itemId);
-
-		mChat = connection.getChatManager().createChat(
+		Chat chat = connection.getChatManager().createChat(
 				auctionId(itemId, connection), null);
-		this.mConnection = connection;
-		Auction auction = new XMPPAuction(mChat);
-		mChat.addMessageListener(new AuctionMessageTranslator(connection
+
+		mChat.add(chat);
+		
+		Auction auction = new XMPPAuction(itemId, mChat.get(getChatIndex()));
+		mChat.get(getChatIndex()).addMessageListener(new AuctionMessageTranslator(itemId, connection
 				.getUser(), new AuctionSniper(itemId, auction,
 				new UIThreadSniperListener(this, snipers))));
+
+
 		auction.join();
+		increaseChatIndex();
 	}
 
 	private void safelyAddItemToModel(final String itemId) {
@@ -135,8 +168,9 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onPause() {
-		Thread commDisThread = new Thread(new CommDis(this.mConnection));
+		Thread commDisThread = new Thread(new CommDis(connection));
 		commDisThread.start();
+		setChatIndex(0);
 		super.onPause();
 	}
 }

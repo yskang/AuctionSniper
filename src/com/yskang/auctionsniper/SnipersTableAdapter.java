@@ -27,7 +27,6 @@ public class SnipersTableAdapter extends BaseAdapter{
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		Log.d("yskang", "getView() called");
 		View view = convertView;
 
 		if (view == null) {
@@ -130,7 +129,6 @@ public class SnipersTableAdapter extends BaseAdapter{
 
 	@Override
 	public int getCount() {
-		Log.d("yskang", "getCount(): " + snapshotsList.size());
 		return snapshotsList.size();
 	}
 

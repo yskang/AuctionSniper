@@ -10,11 +10,14 @@ public class AuctionMessageTranslator implements MessageListener {
 	private static final String EVENT_TYPE_PRICE = "PRICE";
 	private static final String EVENT_TYPE_CLOSE = "CLOSE";
 	private final String sniperId;
-	public AuctionEventListener auctionEventListener;
+	private final String itemId;
+	private final AuctionEventListener auctionEventListener;
 
-	public AuctionMessageTranslator(String sniperId, AuctionEventListener listener) {
+	public AuctionMessageTranslator(String itemId, String sniperId, AuctionEventListener listener) {
 		this.auctionEventListener = listener;
 		this.sniperId = sniperId;
+		this.itemId = itemId;
+		Log.d("yskang", "create translator : "+itemId);
 	}
 
 	@Override
@@ -23,6 +26,7 @@ public class AuctionMessageTranslator implements MessageListener {
 		String eventType = event.type();
 		
 		Log.d("yskang", "Sniper receive message: " + event);
+		Log.d("yskang", "Sniper receive message from " + itemId);
 		
 		if (EVENT_TYPE_CLOSE.equals(eventType)) {
 			auctionEventListener.auctionClosed();
