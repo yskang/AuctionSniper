@@ -19,9 +19,9 @@ public class ApplicationRunner {
 
 	public void startBiddingIn(final FakeAuctionServer... auctions) {
 		for (FakeAuctionServer auction : auctions) {
-			itemId = auction.getItemId();
-			driver.startJoinToServer();
-			driver.showsSniperStatus(auction.getItemId(), 0, 0, STATUS_JOINING);
+			final String itemId = auction.getItemId();
+			driver.startBiddingFor(itemId);
+			driver.showsSniperStatus(itemId, 0, 0, STATUS_JOINING);
 		}
 	}
 
@@ -42,11 +42,11 @@ public class ApplicationRunner {
 	}
 
 	public void hasShownSniperIsWinning(FakeAuctionServer auction, int winningBid) {
-		driver.showsSniperStatus(itemId, winningBid, winningBid, STATUS_WINNING);
+		driver.showsSniperStatus(auction.getItemId(), winningBid, winningBid, STATUS_WINNING);
 	}
 
 	public void showsSniperHasWonAuction(FakeAuctionServer auction, int lastPrice) {
-		driver.showsSniperStatus(itemId, lastPrice, lastPrice, STATUS_WON);
+		driver.showsSniperStatus(auction.getItemId(), lastPrice, lastPrice, STATUS_WON);
 	}
 
 }

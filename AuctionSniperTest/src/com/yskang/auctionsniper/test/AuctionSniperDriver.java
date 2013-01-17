@@ -6,6 +6,8 @@ import com.jayway.android.robotium.solo.Solo;
 
 import static junit.framework.Assert.assertTrue;
 
+
+
 public class AuctionSniperDriver {
 
 	private Solo solo;
@@ -23,8 +25,9 @@ public class AuctionSniperDriver {
 
 	}
 
-	public void startJoinToServer() {
-		solo.clickOnButton("Join");
+	public void startBiddingFor(String itemId) {
+		solo.enterText(com.yskang.auctionsniper.R.id.editText_ItemId, itemId);
+		solo.clickOnButton("Join Auction");
 	}
 
 	public void showsSniperStatus(String itemId, int lastPrice, int lastBid,
