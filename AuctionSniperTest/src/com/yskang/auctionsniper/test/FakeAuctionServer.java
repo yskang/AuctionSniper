@@ -17,7 +17,7 @@ import android.util.Log;
 import com.yskang.auctionsniper.MainActivity;
 
 public class FakeAuctionServer {
-	private SingleMessageListener messageListener ;
+	private SingleMessageListener messageListener = new SingleMessageListener();
 
 	public static final String ITEM_ID_AS_LOGIN = "auction-%s";
 	public static final String AUCTION_RESOURCE = "Auction";
@@ -33,7 +33,6 @@ public class FakeAuctionServer {
 		ConnectionConfiguration connConfig = new ConnectionConfiguration(
 				"localhost", 5222, "localhost");
 		this.connection = new XMPPConnection(connConfig);
-		messageListener = new SingleMessageListener(itemId);
 	}
 
 	public void startSellingItem() throws XMPPException {

@@ -10,13 +10,10 @@ public class XMPPAuction implements Auction {
 	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
 	private static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 	private Chat mChat;
-	private String itemId;
 	
 	
-	public XMPPAuction(String itemId, Chat chat){
+	public XMPPAuction(Chat chat){
 		mChat = chat;
-		this.itemId = itemId;
-		Log.d("yskang", "Create XMPPAuction : " + itemId);
 	}
 	
 	@Override
@@ -31,7 +28,7 @@ public class XMPPAuction implements Auction {
 	
 	private void sendMessage(final String message){
 		try {
-			Log.d("yskang", itemId +" Sniper send message: " + message);
+			Log.d("yskang", " Sniper send message: " + message);
 			mChat.sendMessage(message);
 		} catch (XMPPException e) {
 			e.printStackTrace();

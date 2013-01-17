@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
 	}
 
 	public Button buttonJoin;
-	private static XMPPConnection connection;
+	private XMPPConnection connection;
 	public Thread commThread = new Thread(); 
 	public Handler handler = new Handler();
 	public SnipersTableAdapter snipers;
@@ -131,7 +131,7 @@ public class MainActivity extends Activity {
 
 		mChat.add(chat);
 		
-		Auction auction = new XMPPAuction(itemId, chat);
+		Auction auction = new XMPPAuction(chat);
 		chat.addMessageListener(new AuctionMessageTranslator(itemId, connection
 				.getUser(), new AuctionSniper(itemId, auction,
 				new UIThreadSniperListener(this, snipers))));
