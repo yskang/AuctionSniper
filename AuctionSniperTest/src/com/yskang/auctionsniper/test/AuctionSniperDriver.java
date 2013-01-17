@@ -26,7 +26,7 @@ public class AuctionSniperDriver {
 	}
 
 	public void startBiddingFor(String itemId) {
-		solo.enterText(com.yskang.auctionsniper.R.id.editText_ItemId, itemId);
+		solo.enterText(0, itemId);
 		solo.clickOnButton("Join Auction");
 	}
 
