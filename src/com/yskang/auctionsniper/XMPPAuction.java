@@ -8,9 +8,9 @@ import android.util.Log;
 public class XMPPAuction implements Auction {
 	
 	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
-	private static String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
-	private static Chat mChat;
-	private static String itemId;
+	private static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
+	private Chat mChat;
+	private String itemId;
 	
 	
 	public XMPPAuction(String itemId, Chat chat){

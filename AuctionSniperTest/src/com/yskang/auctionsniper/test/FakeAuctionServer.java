@@ -17,17 +17,18 @@ import android.util.Log;
 import com.yskang.auctionsniper.MainActivity;
 
 public class FakeAuctionServer {
-	private static SingleMessageListener messageListener ;
+	private SingleMessageListener messageListener ;
 
 	public static final String ITEM_ID_AS_LOGIN = "auction-%s";
 	public static final String AUCTION_RESOURCE = "Auction";
 	public static final String XMPP_HOSTNAME = "localhost";
 	private static final String AUCTION_PASSWORD = "auction";
-	private final String itemId;
+	private String itemId;
 	private final XMPPConnection connection;
-	private static Chat currentChat;
+	private Chat currentChat;
 
 	public FakeAuctionServer(String itemId) {
+		Log.d("yskang", "Fake server create : " + itemId);
 		this.itemId = itemId;
 		ConnectionConfiguration connConfig = new ConnectionConfiguration(
 				"localhost", 5222, "localhost");
@@ -37,10 +38,10 @@ public class FakeAuctionServer {
 
 	public void startSellingItem() throws XMPPException {
 		connection.connect();
-		Log.d("yskang", "Fake server connect complete");
+		Log.d("yskang", "Fake server connect complete : " + itemId);
 		connection.login(String.format(ITEM_ID_AS_LOGIN, itemId),
 				AUCTION_PASSWORD, AUCTION_RESOURCE);
-		Log.d("yskang", "Fake server login complete");
+		Log.d("yskang", "Fake server login complete : " + itemId);
 		connection.getChatManager().addChatListener(new ChatManagerListener() {
 			public void chatCreated(Chat chat, boolean createdLocally) {
 				currentChat = chat;

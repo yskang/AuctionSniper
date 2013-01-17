@@ -33,19 +33,10 @@ public class MainActivity extends Activity {
 	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
 	public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 
-	public static int chatIndex = 0;
+	private int chatIndex = 0;
 	
-	public static int getChatIndex() {
-		Log.d("yskang", "chatIndex : " + chatIndex);
-		return chatIndex;
-	}
-
-	public static void setChatIndex(int chatIndex) {
-		MainActivity.chatIndex = chatIndex;
-	}
-	
-	public static void increaseChatIndex() {
-		MainActivity.chatIndex++;
+	public void increaseChatIndex() {
+		chatIndex++;
 		Log.d("yskang", "increase chatIndex, chatIndex : " + chatIndex);
 	}
 
@@ -54,7 +45,7 @@ public class MainActivity extends Activity {
 	public Thread commThread = new Thread(); 
 	public Handler handler = new Handler();
 	public SnipersTableAdapter snipers;
-	private static ArrayList<Chat> mChat = new ArrayList<Chat>();;
+	private ArrayList<Chat> mChat = new ArrayList<Chat>();;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +62,7 @@ public class MainActivity extends Activity {
 	}
 	
 	@Override
-	protected void onResume() {
+	protected void  onPostResume() {
 		super.onResume();
 		connectToServer();
 	}
@@ -92,7 +83,7 @@ public class MainActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			try {
-				joinAuction(connection, SNIPER_ITEM_ID_ARRAY[getChatIndex()]);
+				joinAuction(connection, SNIPER_ITEM_ID_ARRAY[chatIndex]);
 			} catch (XMPPException e) {
 				e.printStackTrace();
 			}
@@ -106,7 +97,7 @@ public class MainActivity extends Activity {
 						SNIPER_HOSTNAME, SNIPER_PORT, SNIPER_HOSTNAME);
 				connection = new XMPPConnection(connConfig);
 				connection.connect();
-				Log.d("yskang", "sinper connect complete");
+				Log.d("yskang", "sinper connect complete : " + connection);
 				connection.login(SNIPER_USERNAME, SNIPER_PASSWORD,
 						AUCTION_RESOURCE);
 				Log.d("yskang", "sinper login complete");
@@ -126,6 +117,7 @@ public class MainActivity extends Activity {
 		public void run() {
 				if(mConnection != null){
 					mConnection.disconnect();
+					Log.d("yskang", "sniper disconnect : " + mConnection);
 				}
 		}
 	}
@@ -139,8 +131,8 @@ public class MainActivity extends Activity {
 
 		mChat.add(chat);
 		
-		Auction auction = new XMPPAuction(itemId, mChat.get(getChatIndex()));
-		mChat.get(getChatIndex()).addMessageListener(new AuctionMessageTranslator(itemId, connection
+		Auction auction = new XMPPAuction(itemId, chat);
+		chat.addMessageListener(new AuctionMessageTranslator(itemId, connection
 				.getUser(), new AuctionSniper(itemId, auction,
 				new UIThreadSniperListener(this, snipers))));
 
@@ -170,7 +162,6 @@ public class MainActivity extends Activity {
 	protected void onPause() {
 		Thread commDisThread = new Thread(new CommDis(connection));
 		commDisThread.start();
-		setChatIndex(0);
 		super.onPause();
 	}
 }

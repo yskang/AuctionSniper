@@ -17,10 +17,11 @@ import android.util.Log;
 public class SingleMessageListener implements MessageListener {
 	private final ArrayBlockingQueue<Message> messages = new ArrayBlockingQueue<Message>(
 			1);
-	private static String itemId;
+	private String itemId;
 
 	public SingleMessageListener(String itemId){
 		this.itemId = itemId;
+		Log.d("yskang", itemId + ", Fake server message listener created.");
 	}
 	
 	public void processMessage(Chat chat, Message message) {
