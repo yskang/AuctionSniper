@@ -11,7 +11,6 @@ public class ApplicationRunner {
 	public static final String SNIPER_XMPP_ID = "sniper";
 	private static final String STATUS_WON = "won";
 	private AuctionSniperDriver driver;
-	private String itemId;
 
 	public ApplicationRunner(Solo solo) {
 		driver = new AuctionSniperDriver(solo);
