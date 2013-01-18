@@ -34,12 +34,11 @@ public class MainActivity extends Activity {
 	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
 	public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 
-	private String itemId;
 	private EditText editTextItemId;
-	
+
 	public Button buttonJoin;
 	private XMPPConnection connection;
-	public Thread commThread = new Thread(); 
+	public Thread commThread = new Thread();
 	public Handler handler = new Handler();
 	public SnipersTableAdapter snipers;
 	private ArrayList<Chat> mChat = new ArrayList<Chat>();;
@@ -56,17 +55,17 @@ public class MainActivity extends Activity {
 
 		ListView list = (ListView) findViewById(R.id.AuctionListView);
 		list.setAdapter(snipers);
-		
+
 		editTextItemId = (EditText) findViewById(R.id.editText_ItemId);
 	}
-	
+
 	@Override
-	protected void  onPostResume() {
+	protected void onPostResume() {
 		super.onResume();
 		connectToServer();
 	}
 
-	public void connectToServer(){
+	public void connectToServer() {
 		commThread = new Thread(new Comm());
 		commThread.start();
 	}
@@ -81,13 +80,13 @@ public class MainActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			try {
-				if(editTextItemId.getText().toString().compareTo("") != 0){
+				if (editTextItemId.getText().toString().compareTo("") != 0) {
 					joinAuction(connection, editTextItemId.getText().toString());
 					editTextItemId.setText("");
-				}
-				else
-				{
-					Toast.makeText(getBaseContext(), R.string.warning_for_null_input, Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(getBaseContext(),
+							R.string.warning_for_null_input, Toast.LENGTH_SHORT)
+							.show();
 				}
 			} catch (XMPPException e) {
 				e.printStackTrace();
@@ -120,10 +119,10 @@ public class MainActivity extends Activity {
 		}
 
 		public void run() {
-				if(mConnection != null){
-					mConnection.disconnect();
-					Log.d("yskang", "sniper disconnect : " + mConnection);
-				}
+			if (mConnection != null) {
+				mConnection.disconnect();
+				Log.d("yskang", "sniper disconnect : " + mConnection);
+			}
 		}
 	}
 
@@ -135,12 +134,11 @@ public class MainActivity extends Activity {
 				auctionId(itemId, connection), null);
 
 		mChat.add(chat);
-		
+
 		Auction auction = new XMPPAuction(chat);
 		chat.addMessageListener(new AuctionMessageTranslator(itemId, connection
 				.getUser(), new AuctionSniper(itemId, auction,
 				new UIThreadSniperListener(this, snipers))));
-
 
 		auction.join();
 	}
