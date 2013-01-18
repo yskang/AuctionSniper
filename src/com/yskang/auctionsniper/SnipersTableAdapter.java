@@ -7,10 +7,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
+public class SnipersTableAdapter extends BaseAdapter{
 	private final static int[] STATUS_TEXT_ID = { R.string.status_joining,
 			R.string.status_bidding, R.string.status_winning,
 			R.string.status_lost, R.string.status_won };
@@ -18,17 +18,11 @@ public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
 	private final static SniperSnapshot STARTING_UP = new SniperSnapshot("", 0,
 			0, SniperState.WON);
 	private SniperSnapshot snapshot = STARTING_UP;
-	private static ArrayList<SniperSnapshot> snapshotsList = new ArrayList<SniperSnapshot>();
+	private ArrayList<SniperSnapshot> snapshotsList = new ArrayList<SniperSnapshot>();
 	private Context context;
 
 	public SnipersTableAdapter(Context context) {
-		super(context, R.id.AuctionListView, snapshotsList);
 		this.context = context;
-		if(this.isEmpty()){
-			this.add(STARTING_UP);
-		}else{
-			SnipersTableAdapter.snapshotsList.set(0, STARTING_UP);
-		}
 	}
 
 	@Override
@@ -66,11 +60,11 @@ public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
 	}
 
 	public int getColumnCount() {
-		return snapshotsList.size();
+		return 4;
 	}
 
 	public int getRowCount() {
-		return 1;
+		return snapshotsList.size();
 	}
 
 	public Object getValueAt(int rowIndex, int columnIndex) {
@@ -78,10 +72,22 @@ public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
 	}
 
 	public void sniperStateChanged(SniperSnapshot newSnapshot) {
-		Log.d("yskang", String.format("Sniper State changed: (ID: %s, State: %s)", newSnapshot.getItemId(), newSnapshot.getStatus()));
-		snapshotsList.set(0, newSnapshot);
-		this.snapshot = newSnapshot;
+		Log.d("yskang", String.format(
+				"Sniper State changed: (ID: %s, State: %s)",
+				newSnapshot.getItemId(), newSnapshot.getStatus()));
+		int row = rowMatching(newSnapshot);
+		snapshotsList.set(row, newSnapshot);
 		notifyDataSetChanged();
+	}
+
+	private int rowMatching(SniperSnapshot snapshot) {
+		for (int i = 0; i < snapshotsList.size(); i++) {
+			if (snapshot.isForSameItemAs(snapshotsList.get(i))) {
+				return i;
+			}
+
+		}
+		throw new Defect("Cannot find match for " + snapshot);
 	}
 
 	public static int textFor(SniperState state) {
@@ -107,5 +113,27 @@ public class SnipersTableAdapter extends ArrayAdapter<SniperSnapshot> {
 			break;
 		}
 		return stateStringId;
+	}
+
+	public void addSniper(SniperSnapshot snapshot) {
+		Log.d("yskang", "addSnper : " + snapshot.getItemId() + ", state: "
+				+ snapshot.getStatus());
+		snapshotsList.add(snapshot);
+		notifyDataSetChanged();
+	}
+
+	@Override
+	public SniperSnapshot getItem(int position) {
+		return snapshotsList.get(position);
+	}
+
+	@Override
+	public int getCount() {
+		return snapshotsList.size();
+	}
+
+	@Override
+	public long getItemId(int position) {
+		return position;
 	}
 }

@@ -2,7 +2,6 @@ package com.yskang.auctionsniper;
 
 import android.app.Activity;
 import android.util.Log;
-import android.widget.TextView;
 
 public class UIThreadSniperListener implements SniperListener {
 

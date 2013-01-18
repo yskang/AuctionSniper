@@ -1,17 +1,23 @@
 package com.yskang.auctionsniper;
 
+import java.util.ArrayList;
+
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -19,9 +25,6 @@ public class MainActivity extends Activity {
 	private static final String SNIPER_USERNAME = "sniper";
 	private static final String SNIPER_PASSWORD = "sniper";
 	private static final int SNIPER_PORT = 5222;
-	private static final String SNIPER_ITEM_ID = "item-54321";
-
-	private XMPPConnection mConnection;
 
 	public static final String AUCTION_RESOURCE = "Auction";
 	public static final String ITEM_ID_AS_LOGIN = "auction-%s";
@@ -31,12 +34,14 @@ public class MainActivity extends Activity {
 	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
 	public static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 
+	private EditText editTextItemId;
+
 	public Button buttonJoin;
 	private XMPPConnection connection;
-	public Thread commThread = new Thread(new Comm());
+	public Thread commThread = new Thread();
 	public Handler handler = new Handler();
 	public SnipersTableAdapter snipers;
-	private static Chat mChat;
+	private ArrayList<Chat> mChat = new ArrayList<Chat>();;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +55,19 @@ public class MainActivity extends Activity {
 
 		ListView list = (ListView) findViewById(R.id.AuctionListView);
 		list.setAdapter(snipers);
+
+		editTextItemId = (EditText) findViewById(R.id.editText_ItemId);
+	}
+
+	@Override
+	protected void onPostResume() {
+		super.onResume();
+		connectToServer();
+	}
+
+	public void connectToServer() {
+		commThread = new Thread(new Comm());
+		commThread.start();
 	}
 
 	@Override
@@ -59,27 +77,34 @@ public class MainActivity extends Activity {
 	}
 
 	View.OnClickListener mOnClickListenerJoin = new View.OnClickListener() {
-
 		@Override
 		public void onClick(View v) {
-			commThread.start();
-			sniperStateChanged(new SniperSnapshot(SNIPER_ITEM_ID, 0, 0, SniperState.JOINING));
+			try {
+				if (editTextItemId.getText().toString().compareTo("") != 0) {
+					joinAuction(connection, editTextItemId.getText().toString());
+					editTextItemId.setText("");
+				} else {
+					Toast.makeText(getBaseContext(),
+							R.string.warning_for_null_input, Toast.LENGTH_SHORT)
+							.show();
+				}
+			} catch (XMPPException e) {
+				e.printStackTrace();
+			}
 		}
 	};
 
 	class Comm implements Runnable {
 		public void run() {
 			try {
-
 				ConnectionConfiguration connConfig = new ConnectionConfiguration(
 						SNIPER_HOSTNAME, SNIPER_PORT, SNIPER_HOSTNAME);
 				connection = new XMPPConnection(connConfig);
-
 				connection.connect();
+				Log.d("yskang", "sinper connect complete : " + connection);
 				connection.login(SNIPER_USERNAME, SNIPER_PASSWORD,
 						AUCTION_RESOURCE);
-
-				joinAuction(connection, SNIPER_ITEM_ID);
+				Log.d("yskang", "sinper login complete");
 			} catch (XMPPException e) {
 				e.printStackTrace();
 			}
@@ -94,21 +119,36 @@ public class MainActivity extends Activity {
 		}
 
 		public void run() {
-			mConnection.disconnect();
+			if (mConnection != null) {
+				mConnection.disconnect();
+				Log.d("yskang", "sniper disconnect : " + mConnection);
+			}
 		}
 	}
 
 	public void joinAuction(XMPPConnection connection, String itemId)
 			throws XMPPException {
 
-		mChat = connection.getChatManager().createChat(
+		safelyAddItemToModel(itemId);
+		Chat chat = connection.getChatManager().createChat(
 				auctionId(itemId, connection), null);
-		this.mConnection = connection;
-		Auction auction = new XMPPAuction(mChat);
-		mChat.addMessageListener(new AuctionMessageTranslator(connection
+
+		mChat.add(chat);
+
+		Auction auction = new XMPPAuction(chat);
+		chat.addMessageListener(new AuctionMessageTranslator(itemId, connection
 				.getUser(), new AuctionSniper(itemId, auction,
 				new UIThreadSniperListener(this, snipers))));
+
 		auction.join();
+	}
+
+	private void safelyAddItemToModel(final String itemId) {
+		this.runOnUiThread(new Runnable() {
+			public void run() {
+				snipers.addSniper(SniperSnapshot.joining(itemId));
+			}
+		});
 	}
 
 	private static String auctionId(String itemId, XMPPConnection connection) {
@@ -122,7 +162,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	protected void onPause() {
-		Thread commDisThread = new Thread(new CommDis(this.mConnection));
+		Thread commDisThread = new Thread(new CommDis(connection));
 		commDisThread.start();
 		super.onPause();
 	}

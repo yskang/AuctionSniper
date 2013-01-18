@@ -8,7 +8,7 @@ import android.util.Log;
 public class XMPPAuction implements Auction {
 	
 	public static final String JOIN_COMMAND_FORMAT = "SOLVersion: 1.1; Command: JOIN;";
-	private static String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
+	private static final String BID_COMMAND_FORMAT = "SOLVersion: 1.1; Command: BID; Price: %d;";
 	private Chat mChat;
 	
 	
@@ -28,7 +28,7 @@ public class XMPPAuction implements Auction {
 	
 	private void sendMessage(final String message){
 		try {
-			Log.d("yskang", "Sniper send message: " + message);
+			Log.d("yskang", " Sniper send message: " + message);
 			mChat.sendMessage(message);
 		} catch (XMPPException e) {
 			e.printStackTrace();

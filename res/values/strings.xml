@@ -13,5 +13,6 @@
 	<string name="status_won">won</string>
 	<string name="title_last_price">Last Price:</string>
 	<string name="title_last_bid">Last Bid:</string>
+	<string name="warning_for_null_input">Input the item ID.</string>
     
 </resources>
