@@ -1,7 +1,5 @@
 package com.yskang.auctionsniper;
 
-import android.util.Log;
-
 public enum SniperState {
 	JOINING {
 		@Override
@@ -24,8 +22,6 @@ public enum SniperState {
 	LOST, WON;
 
 	public SniperState whenAuctionClosed() {
-//		throw new Defect("Auction is already closed");
-		Log.d("AuctionSniperLOG", "Auction is already closed");
-		return LOST;
+		throw new Defect("Auction is already closed");
 	}
 }
