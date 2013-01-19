@@ -38,5 +38,6 @@ public class AuctionSniperDriver {
 		assertTrue("status does not match.", solo.searchText(status));;
 	}
 	
+	
 
 }
