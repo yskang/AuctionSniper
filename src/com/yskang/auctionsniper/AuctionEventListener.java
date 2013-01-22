@@ -1,6 +1,8 @@
 package com.yskang.auctionsniper;
 
-public interface AuctionEventListener {
+import java.util.EventListener;
+
+public interface AuctionEventListener extends EventListener{
 
 	public enum PriceSource{
 		FromSniper, FromOtherBidder;

@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
 	public Thread commThread = new Thread();
 	public Handler handler = new Handler();
 	public SnipersTableAdapter snipers;
-	private ArrayList<Chat> mChat = new ArrayList<Chat>();;
+	private ArrayList<Auction> auction = new ArrayList<Auction>();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -128,18 +128,10 @@ public class MainActivity extends Activity {
 
 	public void joinAuction(XMPPConnection connection, String itemId)
 			throws XMPPException {
-
-		safelyAddItemToModel(itemId);
-		Chat chat = connection.getChatManager().createChat(
-				auctionId(itemId, connection), null);
-
-		mChat.add(chat);
-
-		Auction auction = new XMPPAuction(chat);
-		chat.addMessageListener(new AuctionMessageTranslator(itemId, connection
-				.getUser(), new AuctionSniper(itemId, auction,
-				new UIThreadSniperListener(this, snipers))));
-
+		snipers.addSniper(SniperSnapshot.joining(itemId));
+		Auction auction = new XMPPAuction(connection, itemId);
+		this.auction.add(auction);
+		auction.addAuctionEventListener(new AuctionSniper(itemId, auction, new UIThreadSniperListener(this, snipers)));
 		auction.join();
 	}
 

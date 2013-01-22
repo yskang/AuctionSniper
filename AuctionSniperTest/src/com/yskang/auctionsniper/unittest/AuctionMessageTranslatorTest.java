@@ -17,8 +17,7 @@ public class AuctionMessageTranslatorTest extends TestCase {
 	private Mockery context = new Mockery();
 	private final AuctionEventListener listener = context
 			.mock(AuctionEventListener.class);
-	private final AuctionMessageTranslator translator = new AuctionMessageTranslator("itemId",
-			SNIPER_ID, listener);
+	private final AuctionMessageTranslator translator = new AuctionMessageTranslator(SNIPER_ID, listener);
 
 	public void testNotifiesAuctionClosedWhenCloseMessageReceived() {
 
