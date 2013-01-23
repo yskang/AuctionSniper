@@ -49,8 +49,9 @@ public class XMPPAuction implements Auction {
 		}
 	}
 
+	
 	@Override
-	public void addAuctionEventListener(AuctionSniper auctionSniper) {
+	public void addAuctionEventListener(AuctionEventListener auctionSniper) {
 		auctionEventListeners.addListener(auctionSniper);
 	}
 
