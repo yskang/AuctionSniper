@@ -2,6 +2,7 @@ package com.yskang.auctionsniper;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class SnipersTableAdapter extends BaseAdapter{
+public class SnipersTableAdapter extends BaseAdapter implements SniperListener, SniperCollector, PortfolioListener{
 	private final static int[] STATUS_TEXT_ID = { R.string.status_joining,
 			R.string.status_bidding, R.string.status_winning,
 			R.string.status_lost, R.string.status_won };
@@ -20,6 +21,8 @@ public class SnipersTableAdapter extends BaseAdapter{
 	private SniperSnapshot snapshot = STARTING_UP;
 	private ArrayList<SniperSnapshot> snapshotsList = new ArrayList<SniperSnapshot>();
 	private Context context;
+
+	private ArrayList<AuctionSniper> notToBeGCd = new ArrayList<AuctionSniper>();
 
 	public SnipersTableAdapter(Context context) {
 		this.context = context;
@@ -135,5 +138,42 @@ public class SnipersTableAdapter extends BaseAdapter{
 	@Override
 	public long getItemId(int position) {
 		return position;
+	}
+
+	@Override
+	public void sniperJoining(SniperSnapshot snapshot) {
+		sniperStateChanged(snapshot);
+	}
+
+	@Override
+	public void sniperLost(final SniperSnapshot snapshot) {
+		sniperStateChanged(snapshot);
+	}
+
+	@Override
+	public void sniperBidding(final SniperSnapshot snapshot) {
+		sniperStateChanged(snapshot);
+	};	
+	
+	@Override
+	public void sniperWinning(final SniperSnapshot snapshot) {
+		sniperStateChanged(snapshot);
+	};	
+	
+	@Override
+	public void sniperWon(final SniperSnapshot snapshot) {
+		sniperStateChanged(snapshot);
+	}
+
+	@Override
+	public void sniperAdded(AuctionSniper sniper) {
+		notToBeGCd.add(sniper);
+		addSniper(sniper.getSnapshot());
+		sniper.addSniperListener(new UIThreadSniperListener(this, (Activity)context));
+	}
+
+	@Override
+	public void addSniper(AuctionSniper sniper) {
+		sniperAdded(sniper);
 	}
 }

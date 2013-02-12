@@ -1,11 +1,8 @@
 package com.yskang.auctionsniper;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -33,8 +30,10 @@ public class MainActivity extends Activity {
 	public Thread commThread = new Thread();
 	public Handler handler = new Handler();
 	public SnipersTableAdapter snipers;
-	private ArrayList<Auction> auctions = new ArrayList<Auction>();
+	private final Announcer<UserRequestListener> userRequests = Announcer.to(UserRequestListener.class);
+	
 	XMPPAuctionHouse auctionHouse;
+	private final SniperPortfolio portfolio = new SniperPortfolio();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,10 +43,11 @@ public class MainActivity extends Activity {
 		buttonJoin = (Button) findViewById(R.id.button_join);
 		buttonJoin.setOnClickListener(mOnClickListenerJoin);
 
-		snipers = new SnipersTableAdapter(this);
-
+		SnipersTableAdapter adapter = new SnipersTableAdapter(this);
+		portfolio.addPortfolioListener(adapter);
+		
 		ListView list = (ListView) findViewById(R.id.AuctionListView);
-		list.setAdapter(snipers);
+		list.setAdapter(adapter);
 
 		editTextItemId = (EditText) findViewById(R.id.editText_ItemId);
 	}
@@ -56,6 +56,15 @@ public class MainActivity extends Activity {
 	protected void onPostResume() {
 		super.onResume();
 		connectToServer();
+		addUserRequestListenerFor(auctionHouse);
+	}
+	
+	public void addUserRequestListener(UserRequestListener userRequestListener) {
+		userRequests.addListener(userRequestListener);
+	}
+	
+	private void addUserRequestListenerFor(final XMPPAuctionHouse auctionHouse) {
+		this.addUserRequestListener(new SniperLauncher(auctionHouse, portfolio));
 	}
 
 	public void connectToServer() {
@@ -74,7 +83,7 @@ public class MainActivity extends Activity {
 		public void onClick(View v) {
 			try {
 				if (editTextItemId.getText().toString().compareTo("") != 0) {
-					joinAuction(editTextItemId.getText().toString());
+					userRequests.announce().joinAuction(editTextItemId.getText().toString());
 					editTextItemId.setText("");
 				} else {
 					Toast.makeText(getBaseContext(),
@@ -86,20 +95,6 @@ public class MainActivity extends Activity {
 			}
 		}
 	};
-
-
-	public void joinAuction(String itemId)
-			throws Exception {
-		snipers.addSniper(SniperSnapshot.joining(itemId));
-		Auction auction = auctionHouse.auctionFor(itemId);
-		this.auctions.add(auction);
-		auction.addAuctionEventListener(new AuctionSniper(itemId, auction, new UIThreadSniperListener(this, snipers)));
-		auction.join();
-	}
-
-	public void sniperStateChanged(SniperSnapshot snapshot) {
-		snipers.sniperStateChanged(snapshot);
-	}
 
 	@Override
 	protected void onPause() {

@@ -48,15 +48,15 @@ public class XMPPAuctionHouse implements AuctionHouse {
 
 	public void disConnect() {
 
-		Thread disCommThread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				connection.disconnect();
-			}
-
-		});
-		disCommThread.start();
+//		Thread disCommThread = new Thread(new Runnable() {
+//
+//			@Override
+//			public void run() {
+//				connection.disconnect();
+//			}
+//
+//		});
+//		disCommThread.start();
 	}
 	
 }

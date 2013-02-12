@@ -26,8 +26,7 @@ public class AuctionSniperTest extends TestCase {
 	private final SniperListener sniperListener = context
 			.mock(SniperListener.class);
 
-	private final AuctionSniper sniper = new AuctionSniper(auctionItem, auction,
-			sniperListener);
+	private final AuctionSniper sniper = new AuctionSniper(auctionItem, auction);
 
 	private final States sniperState = context.states("sniper");
 

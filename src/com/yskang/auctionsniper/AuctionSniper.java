@@ -2,13 +2,12 @@ package com.yskang.auctionsniper;
 
 public class AuctionSniper implements AuctionEventListener {
 
-	private final SniperListener sniperListener;
+	private UIThreadSniperListener sniperListener;
 	private Auction auction;
 	private SniperSnapshot snapshot;
 
-	public AuctionSniper(String itemId, Auction auction, SniperListener sniperListener) {
+	public AuctionSniper(String itemId, Auction auction) {
 		this.auction = auction;
-		this.sniperListener = sniperListener;
 		this.snapshot = SniperSnapshot.joining(itemId);
 	}
 
@@ -35,5 +34,13 @@ public class AuctionSniper implements AuctionEventListener {
 
 	private void notifyChange() {
 		sniperListener.sniperStateChanged(snapshot);
+	}
+
+	public SniperSnapshot getSnapshot() {
+		return snapshot;
+	}
+
+	public void addSniperListener(UIThreadSniperListener uiThreadSniperListener) {
+		sniperListener = uiThreadSniperListener;
 	}
 }
